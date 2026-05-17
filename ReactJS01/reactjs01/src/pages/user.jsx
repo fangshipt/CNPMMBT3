@@ -14,20 +14,18 @@ const UserPage = () => {
 
             const res = await getUserApi();
 
-            if (!res?.message) {
-
+            if (res && Array.isArray(res)) {
                 setDataSource(res);
-
+            } else if (res?.EC === 0 && Array.isArray(res.data)) {
+                setDataSource(res.data);
             } else {
-
                 notification.error({
-                    message: "Unauthorized",
-                    description: res.message
-                })
-
+                    message: "Lỗi",
+                    description: res?.EM || res?.message || "Không thể tải danh sách người dùng"
+                });
             }
 
-        }
+        };
 
         fetchUser();
 

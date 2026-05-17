@@ -20,6 +20,8 @@ const Header = () => {
 
     const { auth, setAuth } = useContext(AuthContext);
 
+    const [current, setCurrent] = useState('home');
+
     console.log(">>> check auth: ", auth);
 
     const items = [
@@ -45,7 +47,9 @@ const Header = () => {
 
                     label: <span onClick={() => {
 
-                        localStorage.clear("access_token");
+                        localStorage.removeItem("access_token");
+                        localStorage.removeItem("email");
+                        localStorage.removeItem("name");
 
                         setCurrent("home");
 
@@ -77,8 +81,6 @@ const Header = () => {
             ],
         },
     ];
-
-    const [current, setCurrent] = useState('mail');
 
     const onClick = (e) => {
         console.log('click ', e);

@@ -1,8 +1,14 @@
 import axios from "axios";
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8888";
+
+if (!import.meta.env.VITE_BACKEND_URL) {
+    console.warn("VITE_BACKEND_URL is not defined, falling back to http://localhost:8888");
+}
+
 // Set config defaults when creating the instance
 const instance = axios.create({
-    baseURL: import.meta.env.VITE_BACKEND_URL
+    baseURL: backendUrl
 });
 
 // Add a request interceptor
@@ -36,7 +42,10 @@ instance.interceptors.response.use(function (response) {
     if (error?.response?.data)
         return error?.response?.data;
 
-    return Promise.reject(error);
+    return {
+        EC: -1,
+        EM: error?.message || "Lỗi kết nối server"
+    };
 
 });
 

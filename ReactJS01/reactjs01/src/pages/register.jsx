@@ -24,24 +24,32 @@ const RegisterPage = () => {
 
         const { name, email, password } = values;
 
-        const res = await createUserApi(name, email, password);
+        try {
+            const res = await createUserApi(name, email, password);
 
-        if (res) {
+            if (res && res.EC === 0) {
 
-            notification.success({
-                message: "CREATE USER",
-                description: "Success"
-            });
+                notification.success({
+                    message: "CREATE USER",
+                    description: res.EM || "Đăng ký thành công"
+                });
 
-            navigate("/login");
+                navigate("/login");
 
-        } else {
+            } else {
 
+                notification.error({
+                    message: "CREATE USER",
+                    description: res?.EM || "Đăng ký thất bại"
+                });
+
+            }
+        } catch (error) {
+            console.log("Error:", error);
             notification.error({
                 message: "CREATE USER",
-                description: "error"
+                description: "Lỗi kết nối với server"
             });
-
         }
 
     };

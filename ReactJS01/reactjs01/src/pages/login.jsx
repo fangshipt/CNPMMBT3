@@ -33,10 +33,12 @@ const LoginPage = () => {
         if (res && res.EC === 0) {
 
             localStorage.setItem("access_token", res.access_token);
+            localStorage.setItem("email", res?.user?.email ?? "");
+            localStorage.setItem("name", res?.user?.name ?? "");
 
             notification.success({
                 message: "LOGIN USER",
-                description: "Success"
+                description: "Đăng nhập thành công"
             });
 
             setAuth({
@@ -53,12 +55,13 @@ const LoginPage = () => {
 
             notification.error({
                 message: "LOGIN USER",
-                description: res?.EM ?? "error"
+                description: res?.EM ?? "Đăng nhập thất bại"
             });
 
         }
 
     };
+
 
     return (
         <Row justify={"center"} style={{ marginTop: "30px" }}>

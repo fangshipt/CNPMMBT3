@@ -12,8 +12,6 @@ const delay = require('../middleware/delay');
 
 const routerAPI = express.Router();
 
-routerAPI.use(auth);
-
 routerAPI.get("/", (req, res) => {
     return res.status(200).json("Hello world api");
 });
@@ -21,6 +19,8 @@ routerAPI.get("/", (req, res) => {
 routerAPI.post("/register", createUser);
 
 routerAPI.post("/login", handleLogin);
+
+routerAPI.use(auth);
 
 routerAPI.get("/user", getUser);
 
