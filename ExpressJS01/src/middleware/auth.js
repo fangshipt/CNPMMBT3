@@ -1,13 +1,14 @@
-require("dotenv").config();
+import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
 
-const jwt = require("jsonwebtoken");
+dotenv.config();
 
-const jwtSecret = process.env.JWT_SECRET || "change_this_secret";
+const jwtSecret = process.env.JWT_SECRET || 'change_this_secret';
 
 const auth = (req, res, next) => {
     if (!req.headers.authorization?.split(' ')[1]) {
         return res.status(401).json({
-            message: "Bạn chưa truyền Access Token ở header/Hoặc token bị hết hạn"
+            message: 'Bạn chưa truyền Access Token ở header/Hoặc token bị hết hạn'
         });
     }
 
@@ -19,17 +20,17 @@ const auth = (req, res, next) => {
         req.user = {
             email: decoded.email,
             name: decoded.name,
-            createdBy: "hoidanit"
+            createdBy: 'hoidanit'
         };
 
-        console.log(">>> check token: ", decoded);
+        console.log('>>> check token: ', decoded);
 
         next();
     } catch (error) {
         return res.status(401).json({
-            message: "Token bị hết hạn/hoặc không hợp lệ"
+            message: 'Token bị hết hạn/hoặc không hợp lệ'
         });
     }
 }
 
-module.exports = auth;
+export default auth;

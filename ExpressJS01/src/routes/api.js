@@ -1,29 +1,24 @@
-const express = require('express');
+import express from 'express';
 
-const {
-    createUser,
-    handleLogin,
-    getUser,
-    getAccount
-} = require('../controllers/userController');
+import * as userController from '../controllers/userController.js';
 
-const auth = require('../middleware/auth');
-const delay = require('../middleware/delay');
+import auth from '../middleware/auth.js';
+import delay from '../middleware/delay.js';
 
 const routerAPI = express.Router();
 
-routerAPI.get("/", (req, res) => {
-    return res.status(200).json("Hello world api");
+routerAPI.get('/', (req, res) => {
+    return res.status(200).json('Hello world api');
 });
 
-routerAPI.post("/register", createUser);
+routerAPI.post('/register', userController.createUser);
 
-routerAPI.post("/login", handleLogin);
+routerAPI.post('/login', userController.handleLogin);
 
 routerAPI.use(auth);
 
-routerAPI.get("/user", getUser);
+routerAPI.get('/user', userController.getUser);
 
-routerAPI.get("/account", delay, getAccount);
+routerAPI.get('/account', delay, userController.getAccount);
 
-module.exports = routerAPI;
+export default routerAPI;

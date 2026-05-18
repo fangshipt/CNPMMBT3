@@ -15,4 +15,4 @@ const delay = (req, res, next) => {
 
 }
 
-module.exports = delay;
+export default delay;

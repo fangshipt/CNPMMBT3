@@ -1,12 +1,48 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
-    name: String,
-    email: String,
-    password: String,
-    role: String,
-});
+const userSchema = new mongoose.Schema(
+  {
+    fullName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
-const User = mongoose.model('user', userSchema);
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
 
-module.exports = User;
+    password: {
+      type: String,
+      required: true,
+    },
+
+    phone: {
+      type: String,
+      default: "",
+    },
+
+    avatar: {
+      type: String,
+      default:
+        "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+    },
+
+    role: {
+      type: String,
+      enum: ["customer", "admin"],
+      default: "customer",
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+const User = mongoose.model("User", userSchema);
+
+export default User;

@@ -1,12 +1,13 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
-// import các nguồn cần dùng
-const express = require('express');
-const configViewEngine = require('./config/viewEngine');
-const apiRoutes = require('./routes/api');
-const connection = require('./config/database');
-const { getHomepage } = require('./controllers/homeController');
-const cors = require('cors');
+import express from 'express';
+import cors from 'cors';
+import authRoute from './routes/authRoute.js';
+import configViewEngine from './config/viewEngine.js';
+import apiRoutes from './routes/api.js';
+import connection from './config/database.js';
+import { getHomepage } from './controllers/homeController.js';
 
 const app = express();
 
@@ -27,13 +28,14 @@ configViewEngine(app);
 
 // config route cho view ejs
 const webAPI = express.Router();
-
-webAPI.get("/", getHomepage);
-
+webAPI.get('/', getHomepage);
 app.use('/', webAPI);
 
 // khai báo route cho API
 app.use('/v1/api/', apiRoutes);
+
+// khai báo auth route
+app.use('/api/auth', authRoute);
 
 (async () => {
     try {
@@ -46,6 +48,6 @@ app.use('/v1/api/', apiRoutes);
         });
 
     } catch (error) {
-        console.log(">>> Error connect to DB: ", error);
+        console.log('>>> Error connect to DB: ', error);
     }
 })();

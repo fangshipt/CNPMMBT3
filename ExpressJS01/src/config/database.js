@@ -1,5 +1,7 @@
-require('dotenv').config();
-const mongoose = require('mongoose');
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+
+dotenv.config();
 
 const dbState = [
     {
@@ -31,4 +33,4 @@ const connection = async () => {
     );
 }
 
-module.exports = connection;
+export default connection;
