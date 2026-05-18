@@ -18,9 +18,9 @@ const auth = (req, res, next) => {
         const decoded = jwt.verify(token, jwtSecret);
 
         req.user = {
+            id: decoded.id,
             email: decoded.email,
-            name: decoded.name,
-            createdBy: 'hoidanit'
+            role: decoded.role,
         };
 
         console.log('>>> check token: ', decoded);
@@ -33,4 +33,39 @@ const auth = (req, res, next) => {
     }
 }
 
+const optionalAuth = (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
+
+    if (!token) {
+        return next();
+    }
+
+    try {
+        const decoded = jwt.verify(token, jwtSecret);
+
+        req.user = {
+            id: decoded.id,
+            email: decoded.email,
+            role: decoded.role,
+        };
+
+        console.log('>>> check token: ', decoded);
+    } catch (error) {
+        console.log('>>> invalid token: ', error.message);
+    }
+
+    next();
+};
+
+const isAdmin = (req, res, next) => {
+    if (req.user?.role !== 'admin') {
+        return res.status(403).json({
+            message: 'Chỉ admin mới được thực hiện thao tác này'
+        });
+    }
+
+    next();
+};
+
 export default auth;
+export { isAdmin, optionalAuth };
