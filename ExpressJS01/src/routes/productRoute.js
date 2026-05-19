@@ -7,13 +7,17 @@ import {
   updateProduct,
   getRelatedProducts,
   updateProductStock,
+  getTopSellers,
+  getMostViewed,
 } from "../controllers/productController.js";
 import { isAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// Public routes
+// Public routes — fixed paths BEFORE dynamic /:idOrSlug
 router.get("/", getProducts);
+router.get("/top-sellers", getTopSellers);
+router.get("/most-viewed", getMostViewed);
 router.get("/:idOrSlug", getProductByIdOrSlug);
 router.get("/:id/related", getRelatedProducts);
 

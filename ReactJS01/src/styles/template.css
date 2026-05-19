@@ -450,14 +450,27 @@ a.categories-item:hover iconify-icon.category-icon {
 .hero-slider-pagination {
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 12px;
   position: relative;
   z-index: 3;
 }
 
 .hero-slider-pagination .swiper-pagination-bullet {
   cursor: pointer;
-  margin: 0 8px;
   padding: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(65, 64, 62, 0.3);
+  border: none;
+  opacity: 1;
+  transition: all 0.3s ease;
+}
+
+.hero-slider-pagination .swiper-pagination-bullet:hover {
+  background-color: rgba(65, 64, 62, 0.5);
+  transform: scale(1.2);
 }
 
 .swiper-pagination-bullet {
@@ -469,8 +482,11 @@ a.categories-item:hover iconify-icon.category-icon {
 }
 
 .swiper-pagination-bullet.swiper-pagination-bullet-active {
-  background-color: var(--bs-body-color);
-  background: var(--bs-body-color);
+  background-color: #DEAD6F;
+  background: #DEAD6F;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
 }
 
 .swiper-horizontal>.swiper-pagination-bullets .swiper-pagination-bullet,
@@ -581,7 +597,7 @@ a.categories-item:hover iconify-icon.category-icon {
 }
 
 .product-showcase-image {
-  aspect-ratio: 1.1 / 1;
+  aspect-ratio: 1 / 1;
   background: #f3f0ec;
   object-fit: cover;
   width: 100%;

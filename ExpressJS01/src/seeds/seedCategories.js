@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 import Category from "../models/category.js";
-await mongoose.connect("mongodb://127.0.0.1:27017/petshop");
+await mongoose.connect("mongodb://127.0.0.1:27017/fullstack02");
 
 await Category.deleteMany();
 

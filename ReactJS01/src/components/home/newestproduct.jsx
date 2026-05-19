@@ -1,40 +1,16 @@
-import item1 from "../../assets/item1.jpg";
-import item2 from "../../assets/item2.jpg";
-import item3 from "../../assets/item3.jpg";
-import item4 from "../../assets/item4.jpg";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { getProductsApi, getImageUrl, formatPrice } from "../../util/api";
 
-const products = [
-  {
-    id: 1,
-    name: "Áo hoodie xám",
-    price: "129.000đ",
-    label: "Phụ kiện",
-    image: item1,
-  },
-  {
-    id: 2,
-    name: "Áo hoodie mềm",
-    price: "139.000đ",
-    label: "Hàng mới",
-    image: item2,
-  },
-  {
-    id: 3,
-    name: "Khăn lau nhanh",
-    price: "75.000đ",
-    label: "Chăm sóc",
-    image: item3,
-  },
-  {
-    id: 4,
-    name: "Túi đựng đồ ăn",
-    price: "99.000đ",
-    label: "Tiện dụng",
-    image: item4,
-  },
-];
+function newestProduct() {
+  const [products, setProducts] = useState([]);
 
-function NewestProduct() {
+  useEffect(() => {
+    getProductsApi({ isNewProduct: true, limit: 4 }).then((res) => {
+      if (res.EC === 0) setProducts(res.data);
+    });
+  }, []);
+
   return (
     <section id="newest-products" className="my-5 py-5">
       <div className="container">
@@ -45,25 +21,33 @@ function NewestProduct() {
 
         <div className="row g-4">
           {products.map((product) => (
-            <div key={product.id} className="col-md-6 col-lg-3">
+            <div key={product._id} className="col-md-6 col-lg-3">
               <article className="card product-showcase-card h-100 text-center">
-                <a href="#">
+                <Link to={`/products/${product._id}`}>
                   <img
-                    src={product.image}
+                    src={getImageUrl(product.images?.[0])}
                     className="img-fluid rounded-4 product-showcase-image"
                     alt={product.name}
                   />
-                </a>
+                </Link>
 
                 <div className="card-body px-0 pb-0">
-                  <div className="product-label mb-3">{product.label}</div>
-                  <h5 className="card-title">{product.name}</h5>
+                  <div className="product-label mb-3">
+                    {product.category?.name && (
+                      <Link to={`/products?category=${product.category._id}`} className="text-decoration-none" style={{ color: "inherit" }}>
+                        {product.category.name}
+                      </Link>
+                    )}
+                  </div>
+                  <Link to={`/products/${product._id}`} className="text-decoration-none">
+                    <h5 className="card-title">{product.name}</h5>
+                  </Link>
                   <p className="card-text text-primary fw-bold product-price">
-                    {product.price}
+                    {formatPrice(product.discountPrice > 0 ? product.discountPrice : product.price)}
                   </p>
-                  <button className="btn btn-outline-primary btn-sm">
+                  <Link to={`/products/${product._id}`} className="btn btn-outline-primary btn-sm">
                     Thêm vào giỏ
-                  </button>
+                  </Link>
                 </div>
               </article>
             </div>
@@ -74,4 +58,4 @@ function NewestProduct() {
   );
 }
 
-export default NewestProduct;
+export default newestProduct;

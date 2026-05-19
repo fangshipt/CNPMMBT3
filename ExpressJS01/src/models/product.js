@@ -92,6 +92,12 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+
+    views: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
   },
   {
     timestamps: true,
@@ -104,6 +110,8 @@ productSchema.index({ category: 1 });
 productSchema.index({ isFeatured: 1 });
 productSchema.index({ isBestSeller: 1 });
 productSchema.index({ isNewProduct: 1 });
+productSchema.index({ sold: -1 });
+productSchema.index({ views: -1 });
 
 const Product = mongoose.model("Product", productSchema);
 

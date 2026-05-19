@@ -8,6 +8,7 @@ import configViewEngine from './config/viewEngine.js';
 import apiRoutes from './routes/api.js';
 import connection from './config/database.js';
 import { getHomepage } from './controllers/homeController.js';
+import uploadRoute from "./routes/uploadRoute.js";
 
 const app = express();
 
@@ -36,6 +37,9 @@ app.use('/v1/api/', apiRoutes);
 
 // khai báo auth route
 app.use('/api/auth', authRoute);
+
+// khai báo upload route
+app.use('/api/upload', uploadRoute);
 
 (async () => {
     try {

@@ -63,16 +63,18 @@ function HeroBanner() {
 
                     <a
                       href="#"
-                      className="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1"
+                      className="btn btn-outline-dark rounded-1 text-uppercase"
+                      style={{ padding: "0.6rem 1.5rem", fontSize: "0.9rem" }}
                       tabIndex={activeSlide === index ? 0 : -1}
                     >
                       Mua ngay
 
                       <svg
-                        width="24"
-                        height="24"
+                        width="18"
+                        height="18"
                         viewBox="0 0 24 24"
-                        className="mb-1"
+                        className="mb-1 ms-2"
+                        style={{ display: "inline" }}
                       >
                         <use xlinkHref="#arrow-right"></use>
                       </svg>

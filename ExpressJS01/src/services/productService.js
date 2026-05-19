@@ -110,7 +110,14 @@ export const getProductsService = async (query) => {
     const limitNum = Math.max(1, Math.min(100, parseInt(limit) || 10));
     const skip = (pageNum - 1) * limitNum;
 
-    const filter = { isActive: true };
+    const filter = {};
+    if (query.isActive === "all") {
+      // admin: show all products
+    } else if (query.isActive === "false") {
+      filter.isActive = false;
+    } else {
+      filter.isActive = true;
+    }
 
     if (search) {
       filter.$text = { $search: search };
@@ -169,40 +176,31 @@ export const getProductsService = async (query) => {
 export const getProductByIdOrSlugService = async (idOrSlug) => {
   try {
     if (!idOrSlug) {
-      return {
-        EC: 1,
-        EM: "Vui lòng cung cấp ID hoặc slug",
-      };
+      return { EC: 1, EM: "Vui lòng cung cấp ID hoặc slug" };
     }
 
     const filter = { isActive: true };
-
     if (isValidObjectId(idOrSlug)) {
       filter._id = idOrSlug;
     } else {
       filter.slug = idOrSlug;
     }
 
-    const product = await Product.findOne(filter).populate("category", "name slug");
+    // Increment views atomically and return updated document
+    const product = await Product.findOneAndUpdate(
+      filter,
+      { $inc: { views: 1 } },
+      { new: true }
+    ).populate("category", "name slug");
 
     if (!product) {
-      return {
-        EC: 1,
-        EM: "Sản phẩm không tồn tại",
-      };
+      return { EC: 1, EM: "Sản phẩm không tồn tại" };
     }
 
-    return {
-      EC: 0,
-      EM: "Lấy chi tiết sản phẩm thành công",
-      data: product,
-    };
+    return { EC: 0, EM: "Lấy chi tiết sản phẩm thành công", data: product };
   } catch (error) {
     console.log(">>> error getProductByIdOrSlugService: ", error);
-    return {
-      EC: 1,
-      EM: error.message || "Lỗi lấy chi tiết sản phẩm",
-    };
+    return { EC: 1, EM: error.message || "Lỗi lấy chi tiết sản phẩm" };
   }
 };
 
@@ -356,6 +354,36 @@ export const getRelatedProductsService = async (productId, limit = 6) => {
       EC: 1,
       EM: error.message || "Lỗi lấy sản phẩm liên quan",
     };
+  }
+};
+
+export const getTopSellersService = async (limit = 10) => {
+  try {
+    const products = await Product.find({ isActive: true, sold: { $gt: 0 } })
+      .populate("category", "name slug")
+      .sort({ sold: -1 })
+      .limit(Math.min(parseInt(limit) || 10, 50))
+      .lean();
+
+    return { EC: 0, EM: "Lấy top sản phẩm bán chạy thành công", data: products };
+  } catch (error) {
+    console.log(">>> error getTopSellersService: ", error);
+    return { EC: 1, EM: error.message || "Lỗi lấy top bán chạy" };
+  }
+};
+
+export const getMostViewedService = async (limit = 10) => {
+  try {
+    const products = await Product.find({ isActive: true, views: { $gt: 0 } })
+      .populate("category", "name slug")
+      .sort({ views: -1 })
+      .limit(Math.min(parseInt(limit) || 10, 50))
+      .lean();
+
+    return { EC: 0, EM: "Lấy top sản phẩm xem nhiều thành công", data: products };
+  } catch (error) {
+    console.log(">>> error getMostViewedService: ", error);
+    return { EC: 1, EM: error.message || "Lỗi lấy top xem nhiều" };
   }
 };
 

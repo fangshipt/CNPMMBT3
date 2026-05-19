@@ -479,19 +479,32 @@ a.categories-item:hover iconify-icon.category-icon {
 a.btn-cart {
   align-items: center;
   border-radius: 0.25rem;
-  border: 1px solid rgba(65, 64, 62, 0.20);
+  border: 1px solid rgba(65, 64, 62, 0.12);
   display: inline-flex;
   justify-content: center;
   min-height: 48px;
+  background: var(--bs-primary);
+  color: #fff;
+}
+
+a.btn-cart:hover {
+  background: #e9b775;
+  color: #fff;
 }
 
 a.btn-wishlist {
   align-items: center;
   border-radius: 0.25rem;
-  border: 1px solid rgba(65, 64, 62, 0.20);
+  border: 1px solid var(--bs-primary);
   display: inline-flex;
   justify-content: center;
   min-height: 48px;
+  color: var(--bs-primary);
+  background: transparent;
+}
+
+a.btn-wishlist:hover {
+  background: rgba(var(--bs-primary-rgb), 0.08);
 }
 
 

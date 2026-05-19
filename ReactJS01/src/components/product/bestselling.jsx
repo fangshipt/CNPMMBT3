@@ -1,21 +1,21 @@
-import item3 from "../../assets/item3.jpg";
-import item4 from "../../assets/item4.jpg";
-import item5 from "../../assets/item5.jpg";
-import item6 from "../../assets/item6.jpg";
-import item7 from "../../assets/item7.jpg";
-import item8 from "../../assets/item8.jpg";
+import { useState, useEffect } from "react";
+import { getProductsApi, getImageUrl, formatPrice } from "../../util/api";
 
 function BestSelling() {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    getProductsApi({ isBestSeller: true, limit: 6 }).then((res) => {
+      if (res.EC === 0) setProducts(res.data);
+    });
+  }, []);
+
   return (
     <section id="bestselling" className="my-5 overflow-hidden">
       <div className="container py-5 mb-5">
 
-        {/* Header */}
         <div className="section-header d-md-flex justify-content-between align-items-center mb-3">
-
-          <h2 className="display-3 fw-normal">
-            Sản phẩm bán chạy
-          </h2>
+          <h2 className="display-3 fw-normal">Sản phẩm bán chạy</h2>
 
           <div>
             <a
@@ -23,231 +23,54 @@ function BestSelling() {
               className="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1"
             >
               Xem thêm
-
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                className="mb-1"
-              >
+              <svg width="24" height="24" viewBox="0 0 24 24" className="mb-1">
                 <use xlinkHref="#arrow-right"></use>
               </svg>
             </a>
           </div>
-
         </div>
 
-        {/* Swiper */}
-        <div className="swiper bestselling-swiper">
-          <div className="swiper-wrapper">
-
-            {/* Product 1 */}
-            <div className="swiper-slide">
-
+        <div className="row g-4">
+          {products.map((product) => (
+            <div key={product._id} className="col-md-4 col-lg-2">
               <div className="card position-relative">
+                {product.discountPrice > 0 && (
+                  <div className="z-1 position-absolute rounded-3 m-3 px-3 border border-dark-subtle">
+                    Giảm giá
+                  </div>
+                )}
 
-                <a href="single-product.html">
+                <a href="#">
                   <img
-                    src={item5}
+                    src={getImageUrl(product.images?.[0])}
                     className="img-fluid rounded-4"
-                    alt="Sản phẩm thú cưng"
+                    alt={product.name}
                   />
                 </a>
 
                 <div className="card-body p-0">
-
-                  <a href="single-product.html">
-                    <h3 className="card-title pt-4 m-0">
-                      Áo giữ ấm mềm
-                    </h3>
+                  <a href="#">
+                    <h3 className="card-title pt-4 m-0">{product.name}</h3>
                   </a>
 
                   <div className="card-text">
-
                     <span className="rating secondary-font">
                       <iconify-icon icon="clarity:star-solid" class="text-primary"></iconify-icon>
                       <iconify-icon icon="clarity:star-solid" class="text-primary"></iconify-icon>
                       <iconify-icon icon="clarity:star-solid" class="text-primary"></iconify-icon>
                       <iconify-icon icon="clarity:star-solid" class="text-primary"></iconify-icon>
                       <iconify-icon icon="clarity:star-solid" class="text-primary"></iconify-icon>
-                      {" "}5.0
+                      {" "}{product.rating}
                     </span>
 
                     <h3 className="secondary-font text-primary">
-                      149.000đ
+                      {formatPrice(product.discountPrice > 0 ? product.discountPrice : product.price)}
                     </h3>
-
                   </div>
-
                 </div>
               </div>
             </div>
-
-            {/* Product 2 */}
-            <div className="swiper-slide">
-
-              <div className="card position-relative">
-
-                <a href="single-product.html">
-                  <img
-                    src={item6}
-                    className="img-fluid rounded-4"
-                    alt="Sản phẩm thú cưng"
-                  />
-                </a>
-
-                <div className="card-body p-0">
-
-                  <a href="single-product.html">
-                    <h3 className="card-title pt-4 m-0">
-                      Dây dắt cơ bản
-                    </h3>
-                  </a>
-
-                  <div className="card-text">
-
-                    <span className="rating secondary-font">
-                      <iconify-icon icon="clarity:star-solid" class="text-primary"></iconify-icon>
-                      <iconify-icon icon="clarity:star-solid" class="text-primary"></iconify-icon>
-                      <iconify-icon icon="clarity:star-solid" class="text-primary"></iconify-icon>
-                      <iconify-icon icon="clarity:star-solid" class="text-primary"></iconify-icon>
-                      <iconify-icon icon="clarity:star-solid" class="text-primary"></iconify-icon>
-                      {" "}5.0
-                    </span>
-
-                    <h3 className="secondary-font text-primary">
-                      119.000đ
-                    </h3>
-
-                  </div>
-
-                </div>
-              </div>
-            </div>
-
-            {/* Product 3 */}
-            <div className="swiper-slide">
-
-              <div className="z-1 position-absolute rounded-3 m-3 px-3 border border-dark-subtle">
-                Giảm giá
-              </div>
-
-              <div className="card position-relative">
-
-                <a href="single-product.html">
-                  <img
-                    src={item7}
-                    className="img-fluid rounded-4"
-                    alt="Sản phẩm thú cưng"
-                  />
-                </a>
-
-                <div className="card-body p-0">
-
-                  <a href="single-product.html">
-                    <h3 className="card-title pt-4 m-0">
-                      Balo vận chuyển
-                    </h3>
-                  </a>
-
-                  <div className="card-text">
-
-                    <span className="rating secondary-font">
-                      <iconify-icon icon="clarity:star-solid" class="text-primary"></iconify-icon>
-                      <iconify-icon icon="clarity:star-solid" class="text-primary"></iconify-icon>
-                      <iconify-icon icon="clarity:star-solid" class="text-primary"></iconify-icon>
-                      <iconify-icon icon="clarity:star-solid" class="text-primary"></iconify-icon>
-                      <iconify-icon icon="clarity:star-solid" class="text-primary"></iconify-icon>
-                      {" "}5.0
-                    </span>
-
-                    <h3 className="secondary-font text-primary">
-                      329.000đ
-                    </h3>
-
-                  </div>
-
-                </div>
-              </div>
-            </div>
-
-            {/* Product 4 */}
-            <div className="swiper-slide">
-
-              <div className="card position-relative">
-
-                <a href="single-product.html">
-                  <img
-                    src={item8}
-                    className="img-fluid rounded-4"
-                    alt="Sản phẩm thú cưng"
-                  />
-                </a>
-
-                <div className="card-body p-0">
-                  <a href="single-product.html">
-                    <h3 className="card-title pt-4 m-0">
-                      Áo mưa nhỏ
-                    </h3>
-                  </a>
-                </div>
-
-              </div>
-            </div>
-
-            {/* Product 5 */}
-            <div className="swiper-slide">
-
-              <div className="z-1 position-absolute rounded-3 m-3 px-3 border border-dark-subtle">
-                -10%
-              </div>
-
-              <div className="card position-relative">
-
-                <a href="single-product.html">
-                  <img
-                    src={item3}
-                    className="img-fluid rounded-4"
-                    alt="Sản phẩm thú cưng"
-                  />
-                </a>
-
-                <div className="card-body p-0">
-                  <a href="single-product.html">
-                    <h3 className="card-title pt-4 m-0">
-                      Khăn lau nhanh
-                    </h3>
-                  </a>
-                </div>
-
-              </div>
-            </div>
-
-            {/* Product 6 */}
-            <div className="swiper-slide">
-
-              <div className="card position-relative">
-
-                <a href="single-product.html">
-                  <img
-                    src={item4}
-                    className="img-fluid rounded-4"
-                    alt="Sản phẩm thú cưng"
-                  />
-                </a>
-
-                <div className="card-body p-0">
-                  <a href="single-product.html">
-                    <h3 className="card-title pt-4 m-0">
-                      Túi đựng đồ ăn
-                    </h3>
-                  </a>
-                </div>
-
-              </div>
-            </div>
-
-          </div>
+          ))}
         </div>
 
       </div>

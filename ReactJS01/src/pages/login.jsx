@@ -13,7 +13,7 @@ import {
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { AuthContext } from '../components/context/auth.context';
+import { AuthContext } from '../components/context/authContext';
 import { loginApi } from '../util/api';
 
 const LoginPage = () => {
@@ -27,7 +27,8 @@ const LoginPage = () => {
         if (res && res.EC === 0) {
             localStorage.setItem("access_token", res.access_token);
             localStorage.setItem("email", res?.user?.email ?? "");
-            localStorage.setItem("name", res?.user?.name ?? "");
+            localStorage.setItem("name", res?.user?.fullName ?? "");
+            localStorage.setItem("role", res?.user?.role ?? "");
 
             notification.success({
                 message: "Đăng nhập thành công",
@@ -38,7 +39,8 @@ const LoginPage = () => {
                 isAuthenticated: true,
                 user: {
                     email: res?.user?.email ?? "",
-                    name: res?.user?.name ?? ""
+                    name: res?.user?.fullName ?? "",
+                    role: res?.user?.role ?? "",
                 }
             });
 

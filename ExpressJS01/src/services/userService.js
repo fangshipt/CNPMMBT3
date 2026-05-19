@@ -31,10 +31,10 @@ export const createUserService = async (name, email, password) => {
         const hashPassword = await bcrypt.hash(password, saltRounds);
 
         let result = await User.create({
-            name,
+            fullName: name,
             email,
             password: hashPassword,
-            role: 'User'
+            role: 'customer'
         });
 
         return {
@@ -42,7 +42,7 @@ export const createUserService = async (name, email, password) => {
             EM: 'Đăng ký tài khoản thành công',
             user: {
                 email: result.email,
-                name: result.name
+                fullName: result.fullName
             }
         };
 
@@ -84,8 +84,9 @@ export const loginService = async (email, password) => {
         }
 
         const payload = {
+            id: user._id,
             email: user.email,
-            name: user.name
+            role: user.role
         };
 
         const access_token = jwt.sign(payload, jwtSecret, { expiresIn: jwtExpire });
@@ -95,7 +96,8 @@ export const loginService = async (email, password) => {
             access_token,
             user: {
                 email: user.email,
-                name: user.name
+                fullName: user.fullName,
+                role: user.role
             }
         };
 

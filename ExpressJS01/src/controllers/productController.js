@@ -6,6 +6,8 @@ import {
   updateProductService,
   getRelatedProductsService,
   updateProductStockService,
+  getTopSellersService,
+  getMostViewedService,
 } from "../services/productService.js";
 
 export const createProduct = async (req, res) => {
@@ -42,4 +44,14 @@ export const updateProductStock = async (req, res) => {
   const { quantity } = req.body;
   const data = await updateProductStockService(req.params.id, quantity);
   return res.status(data.EC === 0 ? 200 : 400).json(data);
+};
+
+export const getTopSellers = async (req, res) => {
+  const data = await getTopSellersService(req.query.limit);
+  return res.status(data.EC === 0 ? 200 : 500).json(data);
+};
+
+export const getMostViewed = async (req, res) => {
+  const data = await getMostViewedService(req.query.limit);
+  return res.status(data.EC === 0 ? 200 : 500).json(data);
 };

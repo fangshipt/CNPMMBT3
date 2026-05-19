@@ -7,12 +7,14 @@ import {
   SettingOutlined,
   ShoppingCartOutlined,
   HeartOutlined,
+  DashboardOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 
-import { Badge, Menu } from "antd";
+import { Avatar, Badge, Menu } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 
-import { AuthContext } from "../context/auth.context";
+import { AuthContext } from "../context/authContext";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -20,11 +22,7 @@ const Header = () => {
   const [current, setCurrent] = useState("home");
 
   const items = [
-    {
-      label: <span className="menu-category-label">Danh mục</span>,
-      key: "category",
-    },
-    {
+        {
       label: <Link to={"/"}>Trang chủ</Link>,
       key: "home",
       icon: <HomeOutlined />,
@@ -44,7 +42,7 @@ const Header = () => {
       ],
     },
     {
-      label: "Sản phẩm",
+      label: <Link to={"/products"}>Sản phẩm</Link>,
       key: "shop",
     },
     {
@@ -68,7 +66,6 @@ const Header = () => {
       label: (
         <div className="header-actions">
           <HeartOutlined aria-label="Yêu thích" />
-
           <Badge count={3} size="small">
             <ShoppingCartOutlined aria-label="Giỏ hàng" />
           </Badge>
@@ -77,12 +74,30 @@ const Header = () => {
       key: "icons",
     },
     {
-      label: auth.isAuthenticated
-        ? `Xin chào ${auth?.user?.name || auth?.user?.email || "bạn"}`
-        : "Tài khoản",
+      label: auth.isAuthenticated ? (
+        <span style={{ display: "flex", alignItems: "center", gap: 7 }}>
+          <Avatar
+            size={26}
+            icon={<UserOutlined />}
+            style={{ backgroundColor: "#ff6b35", flexShrink: 0 }}
+          />
+          <span>Chào {auth?.user?.name || auth?.user?.email || "bạn"}!</span>
+        </span>
+      ) : (
+        "Tài khoản"
+      ),
       key: "account",
-      icon: <SettingOutlined />,
+      icon: auth.isAuthenticated ? null : <SettingOutlined />,
       children: [
+        ...(auth.isAuthenticated && auth.user?.role === "admin"
+          ? [
+              {
+                label: <Link to={"/admin"}>Quản lý cửa hàng</Link>,
+                key: "manage-store",
+                icon: <DashboardOutlined style={{ color: "#ff6b35" }} />,
+              },
+            ]
+          : []),
         ...(auth.isAuthenticated
           ? [
               {
@@ -92,14 +107,12 @@ const Header = () => {
                       localStorage.removeItem("access_token");
                       localStorage.removeItem("email");
                       localStorage.removeItem("name");
+                      localStorage.removeItem("role");
 
                       setCurrent("home");
                       setAuth({
                         isAuthenticated: false,
-                        user: {
-                          email: "",
-                          name: "",
-                        },
+                        user: { email: "", name: "", role: "" },
                       });
 
                       navigate("/");
