@@ -9,7 +9,7 @@ function Footer() {
 
             <div className="col-md-3">
               <div className="footer-menu">
-                <img src={logo} alt="Waggy" />
+                <img src={logo} alt="Waggy" className="footer-logo" />
 
                 <p className="blog-paragraph fs-6 mt-3">
                   Đồ dùng và thức ăn thú cưng được chọn kỹ, dễ mua và giao tận nhà.

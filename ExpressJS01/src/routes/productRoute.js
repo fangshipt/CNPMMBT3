@@ -9,8 +9,11 @@ import {
   updateProductStock,
   getTopSellers,
   getMostViewed,
+  canReview,
+  addReview,
 } from "../controllers/productController.js";
 import { isAdmin } from "../middleware/auth.js";
+import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -18,8 +21,10 @@ const router = express.Router();
 router.get("/", getProducts);
 router.get("/top-sellers", getTopSellers);
 router.get("/most-viewed", getMostViewed);
-router.get("/:idOrSlug", getProductByIdOrSlug);
 router.get("/:id/related", getRelatedProducts);
+router.get("/:id/can-review", canReview);
+router.post("/:id/reviews", auth, addReview);
+router.get("/:idOrSlug", getProductByIdOrSlug);
 
 // Admin routes
 router.post("/", isAdmin, createProduct);

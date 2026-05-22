@@ -49,7 +49,7 @@ function MiniProductCard({ product }) {
       )}
 
       {/* Image */}
-      <Link to={`/products/${product._id}`} className="d-block overflow-hidden" style={{ aspectRatio: "1" }}>
+      <Link to={`/products/${product.slug || product._id}`} className="d-block overflow-hidden" style={{ aspectRatio: "1" }}>
         <img
           src={getImageUrl(product.images?.[0])}
           alt={product.name}
@@ -67,7 +67,7 @@ function MiniProductCard({ product }) {
             {product.category.name}
           </div>
         )}
-        <Link to={`/products/${product._id}`} className="text-decoration-none">
+        <Link to={`/products/${product.slug || product._id}`} className="text-decoration-none">
           <div
             style={{
               fontSize: "0.82rem", color: "#3a2e28", fontWeight: 500, lineHeight: 1.35,

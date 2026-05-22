@@ -279,8 +279,8 @@ function ProductManagement() {
     <div>
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h4 className="mb-0">Quản lý sản phẩm</h4>
-          <small style={{ color: "#999" }}>Tổng: {totalProducts} sản phẩm</small>
+          <h4 className="mb-0" style={{ color: "#3a2e28", fontWeight: 700 }}>Quản lý sản phẩm</h4>
+          <small style={{ color: "#8a7060" }}>Tổng: {totalProducts} sản phẩm</small>
         </div>
         <Space>
           <Button icon={<ReloadOutlined />} onClick={fetchProducts} loading={loading}>

@@ -204,8 +204,8 @@ function CategoryManagement() {
     <div>
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h4 className="mb-0">Quản lý danh mục</h4>
-          <small style={{ color: "#999" }}>Tổng: {total} danh mục</small>
+          <h4 className="mb-0" style={{ color: "#3a2e28", fontWeight: 700 }}>Quản lý danh mục</h4>
+          <small style={{ color: "#8a7060" }}>Tổng: {total} danh mục</small>
         </div>
         <Space>
           <Button icon={<ReloadOutlined />} onClick={fetchCategories} loading={loading}>

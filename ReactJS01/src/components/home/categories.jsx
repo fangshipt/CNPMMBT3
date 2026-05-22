@@ -1,14 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getCategoriesApi } from "../../util/api";
-
-const CATEGORY_ICONS = {
-  "thuc-an": "ph:bowl-food",
-  "cho-chim": "ph:bird",
-  "cho-cho": "ph:dog",
-  "cho-ca": "ph:fish",
-  "cho-meo": "ph:cat",
-};
+import { getCategoriesApi, getImageUrl } from "../../util/api";
 
 function Categories() {
   const [categories, setCategories] = useState([]);
@@ -21,18 +13,25 @@ function Categories() {
 
   return (
     <section id="categories">
-      <div className="container my-3 py-5">
-        <div className="row my-5">
+      <div className="container pt-4 pb-8">
+        <div className="categories-row">
           {categories.map((cat) => (
-            <div key={cat._id} className="col text-center">
-              <Link to={`/products?category=${cat._id}`} className="categories-item text-decoration-none">
-                <iconify-icon
-                  class="category-icon"
-                  icon={CATEGORY_ICONS[cat.slug] || "ph:paw-print"}
-                ></iconify-icon>
-                <h5>{cat.name}</h5>
-              </Link>
-            </div>
+            <Link
+              key={cat._id}
+              to={`/products?category=${cat._id}`}
+              className="categories-item text-decoration-none d-flex flex-column align-items-center"
+            >
+              <div className="category-img-wrapper">
+                {cat.image && (
+                  <img
+                    src={getImageUrl(cat.image)}
+                    alt={cat.name}
+                    className="category-img"
+                  />
+                )}
+              </div>
+              <span className="category-label">{cat.name}</span>
+            </Link>
           ))}
         </div>
       </div>

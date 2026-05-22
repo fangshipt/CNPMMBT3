@@ -8,6 +8,8 @@ import {
   updateProductStockService,
   getTopSellersService,
   getMostViewedService,
+  canReviewService,
+  addReviewService,
 } from "../services/productService.js";
 
 export const createProduct = async (req, res) => {
@@ -54,4 +56,15 @@ export const getTopSellers = async (req, res) => {
 export const getMostViewed = async (req, res) => {
   const data = await getMostViewedService(req.query.limit);
   return res.status(data.EC === 0 ? 200 : 500).json(data);
+};
+
+export const canReview = async (req, res) => {
+  if (!req.user) return res.json({ EC: 0, data: { canReview: false } });
+  const data = await canReviewService(req.params.id, req.user._id);
+  return res.json(data);
+};
+
+export const addReview = async (req, res) => {
+  const data = await addReviewService(req.params.id, req.user._id, req.body);
+  return res.status(data.EC === 0 ? 201 : 400).json(data);
 };

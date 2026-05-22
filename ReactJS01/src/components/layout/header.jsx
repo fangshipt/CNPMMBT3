@@ -1,28 +1,41 @@
 import { useContext, useState } from "react";
 import {
-  UsergroupAddOutlined,
   HomeOutlined,
   LoginOutlined,
   LogoutOutlined,
   SettingOutlined,
   ShoppingCartOutlined,
-  HeartOutlined,
   DashboardOutlined,
   UserOutlined,
+  EnvironmentOutlined,
+  OrderedListOutlined,
+  HeartOutlined,
 } from "@ant-design/icons";
 
 import { Avatar, Badge, Menu } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../context/authContext";
+import { CartContext } from "../context/cartContext";
 
 const Header = () => {
   const navigate = useNavigate();
   const { auth, setAuth } = useContext(AuthContext);
+  const { cartCount } = useContext(CartContext);
   const [current, setCurrent] = useState("home");
 
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("email");
+    localStorage.removeItem("name");
+    localStorage.removeItem("role");
+    setCurrent("home");
+    setAuth({ isAuthenticated: false, user: { email: "", name: "", role: "" } });
+    navigate("/");
+  };
+
   const items = [
-        {
+    {
       label: <Link to={"/"}>Trang chủ</Link>,
       key: "home",
       icon: <HomeOutlined />,
@@ -31,14 +44,8 @@ const Header = () => {
       label: "Thông tin",
       key: "pages",
       children: [
-        {
-          label: "Về cửa hàng",
-          key: "about",
-        },
-        {
-          label: "Dịch vụ",
-          key: "services",
-        },
+        { label: <Link to={"/about"}>Về cửa hàng</Link>, key: "about" },
+        { label: <Link to={"/services"}>Dịch vụ</Link>, key: "services" },
       ],
     },
     {
@@ -46,28 +53,22 @@ const Header = () => {
       key: "shop",
     },
     {
-      label: "Bài viết",
+      label: <Link to={"/blog"}>Bài viết</Link>,
       key: "blog",
     },
     {
-      label: "Liên hệ",
+      label: <Link to={"/contact"}>Liên hệ</Link>,
       key: "contact",
     },
-    ...(auth.isAuthenticated
-      ? [
-          {
-            label: <Link to={"/user"}>Người dùng</Link>,
-            key: "user",
-            icon: <UsergroupAddOutlined />,
-          },
-        ]
-      : []),
     {
       label: (
         <div className="header-actions">
-          <HeartOutlined aria-label="Yêu thích" />
-          <Badge count={3} size="small">
-            <ShoppingCartOutlined aria-label="Giỏ hàng" />
+          <Badge count={cartCount} size="small" overflowCount={99}>
+            <ShoppingCartOutlined
+              aria-label="Giỏ hàng"
+              style={{ fontSize: "1.1rem" }}
+              onClick={() => navigate("/cart")}
+            />
           </Badge>
         </div>
       ),
@@ -98,29 +99,34 @@ const Header = () => {
               },
             ]
           : []),
+        ...(auth.isAuthenticated && auth.user?.role !== "admin"
+          ? [
+              {
+                label: <Link to={"/user"}>Tài khoản của tôi</Link>,
+                key: "my-account",
+                icon: <UserOutlined />,
+              },
+              {
+                label: <Link to={"/addresses"}>Danh sách địa chỉ</Link>,
+                key: "addresses",
+                icon: <EnvironmentOutlined />,
+              },
+              {
+                label: <Link to={"/orders"}>Đơn hàng của tôi</Link>,
+                key: "orders",
+                icon: <OrderedListOutlined />,
+              },
+              {
+                label: <Link to={"/wishlist"}>Sản phẩm yêu thích</Link>,
+                key: "wishlist",
+                icon: <HeartOutlined />,
+              },
+            ]
+          : []),
         ...(auth.isAuthenticated
           ? [
               {
-                label: (
-                  <span
-                    onClick={() => {
-                      localStorage.removeItem("access_token");
-                      localStorage.removeItem("email");
-                      localStorage.removeItem("name");
-                      localStorage.removeItem("role");
-
-                      setCurrent("home");
-                      setAuth({
-                        isAuthenticated: false,
-                        user: { email: "", name: "", role: "" },
-                      });
-
-                      navigate("/");
-                    }}
-                  >
-                    Đăng xuất
-                  </span>
-                ),
+                label: <span onClick={handleLogout}>Đăng xuất</span>,
                 key: "logout",
                 icon: <LogoutOutlined />,
               },
@@ -137,7 +143,7 @@ const Header = () => {
   ];
 
   const onClick = (e) => {
-    setCurrent(e.key);
+    if (!["icons"].includes(e.key)) setCurrent(e.key);
   };
 
   return (

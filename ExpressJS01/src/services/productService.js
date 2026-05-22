@@ -104,7 +104,7 @@ export const createProductService = async (body) => {
 
 export const getProductsService = async (query) => {
   try {
-    const { page = 1, limit = 10, search = "", category, isFeatured, isBestSeller, isNewProduct, sortBy = "-createdAt" } = query;
+    const { page = 1, limit = 10, search = "", category, isFeatured, isBestSeller, isNewProduct, isOnSale, sortBy = "-createdAt" } = query;
 
     const pageNum = Math.max(1, parseInt(page) || 1);
     const limitNum = Math.max(1, Math.min(100, parseInt(limit) || 10));
@@ -139,6 +139,18 @@ export const getProductsService = async (query) => {
 
     if (isNewProduct === "true" || isNewProduct === true) {
       filter.isNewProduct = true;
+    }
+
+    if (isOnSale === "true" || isOnSale === true) {
+      filter.discountPrice = { $gt: 0 };
+    }
+
+    const minPrice = parseFloat(query.minPrice);
+    const maxPrice = parseFloat(query.maxPrice);
+    if (!isNaN(minPrice) || !isNaN(maxPrice)) {
+      filter.price = {};
+      if (!isNaN(minPrice)) filter.price.$gte = minPrice;
+      if (!isNaN(maxPrice)) filter.price.$lte = maxPrice;
     }
 
     const [products, totalProducts] = await Promise.all([
@@ -384,6 +396,57 @@ export const getMostViewedService = async (limit = 10) => {
   } catch (error) {
     console.log(">>> error getMostViewedService: ", error);
     return { EC: 1, EM: error.message || "Lỗi lấy top xem nhiều" };
+  }
+};
+
+export const canReviewService = async (productId, userId) => {
+  try {
+    const { default: Order } = await import("../models/order.js");
+    const order = await Order.findOne({
+      user: userId,
+      "items.product": productId,
+      status: "delivered",
+    });
+    const product = await Product.findById(productId).select("reviews");
+    const alreadyReviewed = product?.reviews?.some(
+      (r) => r.user.toString() === userId.toString()
+    );
+    return { EC: 0, data: { canReview: !!order && !alreadyReviewed } };
+  } catch (error) {
+    return { EC: 1, EM: error.message };
+  }
+};
+
+export const addReviewService = async (productId, userId, { rating, comment }) => {
+  try {
+    const { default: Order } = await import("../models/order.js");
+    const order = await Order.findOne({
+      user: userId,
+      "items.product": productId,
+      status: "delivered",
+    });
+    if (!order) {
+      return { EC: 1, EM: "Bạn chưa mua sản phẩm này hoặc đơn hàng chưa giao thành công" };
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) return { EC: 1, EM: "Sản phẩm không tồn tại" };
+
+    const alreadyReviewed = product.reviews.some(
+      (r) => r.user.toString() === userId.toString()
+    );
+    if (alreadyReviewed) return { EC: 1, EM: "Bạn đã đánh giá sản phẩm này rồi" };
+
+    product.reviews.push({ user: userId, rating: Number(rating), comment: comment || "" });
+    const total = product.reviews.reduce((s, r) => s + r.rating, 0);
+    product.rating = Math.round((total / product.reviews.length) * 10) / 10;
+    await product.save();
+
+    const { default: User } = await import("../models/user.js");
+    const populated = await Product.findById(productId).populate("reviews.user", "fullName avatar");
+    return { EC: 0, EM: "Đánh giá thành công", data: populated.reviews };
+  } catch (error) {
+    return { EC: 1, EM: error.message };
   }
 };
 

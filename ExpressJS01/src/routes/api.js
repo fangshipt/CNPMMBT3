@@ -29,4 +29,8 @@ routerAPI.get('/user', userController.getUser);
 
 routerAPI.get('/account', delay, userController.getAccount);
 
+// Wishlist routes
+routerAPI.get('/user/wishlist', userController.getWishlist);
+routerAPI.post('/user/wishlist/:productId', userController.toggleWishlist);
+
 export default routerAPI;

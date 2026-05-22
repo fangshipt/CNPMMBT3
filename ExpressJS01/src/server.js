@@ -9,6 +9,13 @@ import apiRoutes from './routes/api.js';
 import connection from './config/database.js';
 import { getHomepage } from './controllers/homeController.js';
 import uploadRoute from "./routes/uploadRoute.js";
+import cartRoute from "./routes/cartRoute.js";
+import addressRoute from "./routes/addressRoute.js";
+import orderRoute from "./routes/orderRoute.js";
+import promotionRoute from "./routes/promotionRoute.js";
+import blogRoute from "./routes/blogRoute.js";
+import testimonialRoute from "./routes/testimonialRoute.js";
+import auth from './middleware/auth.js';
 
 const app = express();
 
@@ -40,6 +47,14 @@ app.use('/api/auth', authRoute);
 
 // khai báo upload route
 app.use('/api/upload', uploadRoute);
+
+// khai báo cart, address, order routes (yêu cầu auth)
+app.use('/v1/api/cart', auth, cartRoute);
+app.use('/v1/api/addresses', auth, addressRoute);
+app.use('/v1/api/orders', auth, orderRoute);
+app.use('/v1/api/promotions', promotionRoute);
+app.use('/v1/api/blogs', blogRoute);
+app.use('/v1/api/testimonials', testimonialRoute);
 
 (async () => {
     try {

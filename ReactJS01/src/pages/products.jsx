@@ -45,6 +45,7 @@ function ProductsPage() {
   const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "-createdAt");
   const [isBestSeller, setIsBestSeller] = useState(searchParams.get("isBestSeller") === "true");
   const [isNewProduct, setIsNewProduct] = useState(searchParams.get("isNewProduct") === "true");
+  const [isOnSale, setIsOnSale] = useState(searchParams.get("isOnSale") === "true");
 
   const [categories, setCategories] = useState([]);
 
@@ -60,7 +61,7 @@ function ProductsPage() {
   const isFetchingRef = useRef(false);
 
   // Build filter key to detect when filters change
-  const filterKey = [search, selectedCategory, selectedPetType, minPrice, maxPrice, sortBy, isBestSeller, isNewProduct].join("|");
+  const filterKey = [search, selectedCategory, selectedPetType, minPrice, maxPrice, sortBy, isBestSeller, isNewProduct, isOnSale].join("|");
 
   // Fetch categories once
   useEffect(() => {
@@ -86,6 +87,7 @@ function ProductsPage() {
       if (maxPrice) params.maxPrice = maxPrice;
       if (isBestSeller) params.isBestSeller = true;
       if (isNewProduct) params.isNewProduct = true;
+      if (isOnSale) params.isOnSale = true;
 
       const res = await getProductsApi(params);
       isFetchingRef.current = false;
@@ -122,6 +124,7 @@ function ProductsPage() {
     if (sortBy !== "-createdAt") params.sortBy = sortBy;
     if (isBestSeller) params.isBestSeller = true;
     if (isNewProduct) params.isNewProduct = true;
+    if (isOnSale) params.isOnSale = true;
     setSearchParams(params);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterKey]);
@@ -160,13 +163,15 @@ function ProductsPage() {
   const changeBestSeller = (val) => setIsBestSeller(val);
   const changeNewProduct = (val) => setIsNewProduct(val);
 
+  const changeIsOnSale = (val) => setIsOnSale(val);
+
   const resetFilters = () => {
     setSearch(""); setSearchInput(""); setSelectedCategory("");
     setSelectedPetType(""); setMinPrice(""); setMaxPrice("");
-    setSortBy("-createdAt"); setIsBestSeller(false); setIsNewProduct(false);
+    setSortBy("-createdAt"); setIsBestSeller(false); setIsNewProduct(false); setIsOnSale(false);
   };
 
-  const hasActiveFilters = search || selectedCategory || selectedPetType || minPrice || maxPrice || isBestSeller || isNewProduct;
+  const hasActiveFilters = search || selectedCategory || selectedPetType || minPrice || maxPrice || isBestSeller || isNewProduct || isOnSale;
   const activeCategory = categories.find((c) => c._id === selectedCategory);
 
   const chipStyle = { background: "#e8ddd5", color: "#5a4a3f", padding: "5px 12px", fontSize: "0.8rem" };
@@ -242,8 +247,13 @@ function ProductsPage() {
                 </span>
               )}
               {isNewProduct && (
-                <span className="badge rounded-pill d-flex align-items-center" style={{ ...chipStyle, background: "#28a745", color: "#fff" }}>
+                <span className="badge rounded-pill d-flex align-items-center" style={{ ...chipStyle, background: "#10b981", color: "#fff" }}>
                   Hàng mới<button style={{ ...chipBtnStyle, color: "#fff" }} onClick={() => changeNewProduct(false)}>×</button>
+                </span>
+              )}
+              {isOnSale && (
+                <span className="badge rounded-pill d-flex align-items-center" style={{ ...chipStyle, background: "#ef4444", color: "#fff" }}>
+                  🏷️ Khuyến mãi<button style={{ ...chipBtnStyle, color: "#fff" }} onClick={() => changeIsOnSale(false)}>×</button>
                 </span>
               )}
             </div>
@@ -303,10 +313,15 @@ function ProductsPage() {
                   onChange={(e) => changeBestSeller(e.target.checked)} />
                 <span>🔥 Bán chạy nhất</span>
               </label>
-              <label className="d-flex align-items-center gap-2" style={{ cursor: "pointer" }}>
+              <label className="d-flex align-items-center gap-2 mb-2" style={{ cursor: "pointer" }}>
                 <input type="checkbox" checked={isNewProduct}
                   onChange={(e) => changeNewProduct(e.target.checked)} />
                 <span>✨ Hàng mới về</span>
+              </label>
+              <label className="d-flex align-items-center gap-2" style={{ cursor: "pointer" }}>
+                <input type="checkbox" checked={isOnSale}
+                  onChange={(e) => changeIsOnSale(e.target.checked)} />
+                <span>🏷️ Đang khuyến mãi</span>
               </label>
             </FilterCard>
           </div>

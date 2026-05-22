@@ -1,14 +1,44 @@
-import { Link } from "react-router-dom";
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { getImageUrl, formatPrice } from "../../util/api";
+import { WishlistContext } from "../context/wishlistContext";
+import { AuthContext } from "../context/authContext";
+import { CartContext } from "../context/cartContext";
 
 function ProductCard({ product }) {
   if (!product) return null;
+  const navigate = useNavigate();
+  const { auth } = useContext(AuthContext);
+  const { isInWishlist, toggleWishlist } = useContext(WishlistContext);
+  const { addToCart } = useContext(CartContext);
+  const inWishlist = isInWishlist(product._id);
+  const [adding, setAdding] = useState(false);
+  const [buyingNow, setBuyingNow] = useState(false);
 
   const displayPrice = product.discountPrice > 0 ? product.discountPrice : product.price;
   const hasDiscount = product.discountPrice > 0 && product.discountPrice < product.price;
   const discountPercent = hasDiscount
     ? Math.round((1 - product.discountPrice / product.price) * 100)
     : 0;
+  const outOfStock = product.stock === 0;
+  const productUrl = `/products/${product.slug || product._id}`;
+
+  const handleAddToCart = async (e) => {
+    e.preventDefault();
+    if (!auth.isAuthenticated) { navigate('/login'); return; }
+    setAdding(true);
+    await addToCart(product._id, 1);
+    setAdding(false);
+  };
+
+  const handleBuyNow = async (e) => {
+    e.preventDefault();
+    if (!auth.isAuthenticated) { navigate('/login'); return; }
+    setBuyingNow(true);
+    await addToCart(product._id, 1);
+    setBuyingNow(false);
+    navigate('/checkout');
+  };
 
   return (
     <div
@@ -34,15 +64,22 @@ function ProductCard({ product }) {
         className="position-absolute"
         style={{ top: 10, left: 10, zIndex: 2, display: "flex", flexDirection: "column", gap: 4 }}
       >
-        {product.isNewProduct && <span className="badge bg-success">Mới</span>}
-        {hasDiscount && !product.isNewProduct && (
-          <span className="badge" style={{ background: "#e74c3c" }}>-{discountPercent}%</span>
+        {product.isBestSeller && (
+          <span className="badge" style={{ background: "#f97316", fontSize: "0.72rem" }}>🔥 Bán chạy</span>
         )}
-        {product.stock === 0 && <span className="badge bg-secondary">Hết hàng</span>}
+        {product.isNewProduct && (
+          <span className="badge" style={{ background: "#10b981", fontSize: "0.72rem" }}>✨ Mới</span>
+        )}
+        {hasDiscount && (
+          <span className="badge" style={{ background: "#ef4444", fontSize: "0.72rem" }}>-{discountPercent}%</span>
+        )}
+        {outOfStock && (
+          <span className="badge" style={{ background: "#64748b", fontSize: "0.72rem" }}>Hết hàng</span>
+        )}
       </div>
 
       {/* Image */}
-      <Link to={`/products/${product._id}`} className="d-block overflow-hidden">
+      <Link to={productUrl} className="d-block overflow-hidden">
         <img
           src={getImageUrl(product.images?.[0])}
           alt={product.name}
@@ -69,7 +106,7 @@ function ProductCard({ product }) {
           </Link>
         )}
 
-        <Link to={`/products/${product._id}`} className="text-decoration-none flex-grow-1">
+        <Link to={productUrl} className="text-decoration-none flex-grow-1">
           <h3
             className="card-title mb-2"
             style={{
@@ -110,19 +147,29 @@ function ProductCard({ product }) {
         </div>
 
         <div className="d-flex gap-2 mt-auto">
-          <Link
-            to={`/products/${product._id}`}
-            className="btn btn-primary btn-sm rounded-2 flex-grow-1"
-            style={{ fontSize: "0.8rem" }}
-          >
-            <iconify-icon icon="ph:shopping-cart" class="me-1"></iconify-icon>
-            Thêm vào giỏ
-          </Link>
           <button
-            className="btn btn-sm rounded-2 px-2"
-            style={{ border: "1px solid #e0d5ca", color: "#a0856e", background: "transparent" }}
+            className="btn btn-outline-primary rounded-2"
+            style={{ fontSize: "0.82rem", padding: "0.4rem 0.6rem", flex: "0 0 auto" }}
+            disabled={outOfStock || adding}
+            onClick={handleAddToCart}
+            title="Thêm vào giỏ hàng"
           >
-            <iconify-icon icon="fluent:heart-28-regular"></iconify-icon>
+            <iconify-icon icon="ph:shopping-cart"></iconify-icon>
+          </button>
+          <button
+            className="btn btn-primary rounded-2 flex-grow-1"
+            style={{ fontSize: "0.82rem", padding: "0.4rem 0.6rem" }}
+            disabled={outOfStock || buyingNow}
+            onClick={handleBuyNow}
+          >
+            {buyingNow ? "..." : "Mua ngay"}
+          </button>
+          <button
+            className="btn rounded-2"
+            style={{ border: inWishlist ? "1px solid #ef4444" : "1px solid #e0d5ca", color: inWishlist ? "#ef4444" : "#a0856e", background: "transparent", padding: "0.4rem 0.6rem", flex: "0 0 auto" }}
+            onClick={(e) => { e.preventDefault(); if (!auth.isAuthenticated) { navigate('/login'); return; } toggleWishlist(product._id); }}
+          >
+            <iconify-icon icon={inWishlist ? "fluent:heart-28-filled" : "fluent:heart-28-regular"}></iconify-icon>
           </button>
         </div>
       </div>
