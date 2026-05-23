@@ -59,7 +59,6 @@ export const getMostViewed = async (req, res) => {
 };
 
 export const canReview = async (req, res) => {
-  if (!req.user) return res.json({ EC: 0, data: { canReview: false } });
   const data = await canReviewService(req.params.id, req.user._id);
   return res.json(data);
 };

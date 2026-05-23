@@ -4,6 +4,7 @@ import {
     getUserService
 } from '../services/userService.js';
 import User from '../models/user.js';
+import bcrypt from 'bcryptjs';
 
 export const createUser = async (req, res) => {
     try {
@@ -59,6 +60,57 @@ export const toggleWishlist = async (req, res) => {
         }
         await user.save();
         return res.json({ EC: 0, data: { inWishlist: idx === -1, wishlist: user.wishlist } });
+    } catch (error) {
+        return res.status(500).json({ EC: 1, EM: error.message });
+    }
+};
+
+export const updateProfile = async (req, res) => {
+    try {
+        const { fullName, phone } = req.body;
+        const user = await User.findByIdAndUpdate(
+            req.user._id,
+            { fullName: fullName?.trim(), phone: phone?.trim() || '' },
+            { new: true, select: '-password' }
+        );
+        return res.json({ EC: 0, EM: 'Cập nhật thông tin thành công', data: user });
+    } catch (error) {
+        return res.status(500).json({ EC: 1, EM: error.message });
+    }
+};
+
+export const changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ EC: 1, EM: 'Vui lòng nhập đầy đủ thông tin' });
+        }
+        if (newPassword.length < 6) {
+            return res.status(400).json({ EC: 1, EM: 'Mật khẩu mới tối thiểu 6 ký tự' });
+        }
+        const user = await User.findById(req.user._id);
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ EC: 1, EM: 'Mật khẩu hiện tại không đúng' });
+        }
+        user.password = await bcrypt.hash(newPassword, 10);
+        await user.save();
+        return res.json({ EC: 0, EM: 'Đổi mật khẩu thành công' });
+    } catch (error) {
+        return res.status(500).json({ EC: 1, EM: error.message });
+    }
+};
+
+export const updateAvatar = async (req, res) => {
+    try {
+        const { avatar } = req.body;
+        if (!avatar) return res.status(400).json({ EC: 1, EM: 'Vui lòng cung cấp URL ảnh' });
+        const user = await User.findByIdAndUpdate(
+            req.user._id,
+            { avatar },
+            { new: true, select: '-password' }
+        );
+        return res.json({ EC: 0, EM: 'Cập nhật ảnh đại diện thành công', data: user });
     } catch (error) {
         return res.status(500).json({ EC: 1, EM: error.message });
     }

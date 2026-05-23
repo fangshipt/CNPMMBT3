@@ -2,8 +2,23 @@ import Order from '../models/order.js';
 import Cart from '../models/cart.js';
 import Product from '../models/product.js';
 import { clearCartService } from './cartService.js';
+import { createPaymentLink } from './payosService.js';
 
-export const createOrderService = async (userId, { addressId, notes, items: manualItems, shippingFee = 0 }) => {
+const generateOrderCode = async () => {
+    const now = new Date();
+    const dd = String(now.getDate()).padStart(2, '0');
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const yy = String(now.getFullYear()).slice(2);
+
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+    const endOfDay   = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+
+    const countToday = await Order.countDocuments({ createdAt: { $gte: startOfDay, $lte: endOfDay } });
+    const seq = String(countToday + 1).padStart(4, '0');
+    return `FS${dd}${mm}${yy}${seq}`;
+};
+
+export const createOrderService = async (userId, { addressId, notes, items: manualItems, shippingFee = 0, paymentMethod = 'COD' }) => {
     let orderItems = [];
     let totalAmount = 0;
 
@@ -38,11 +53,14 @@ export const createOrderService = async (userId, { addressId, notes, items: manu
         throw new Error('Vui lòng chọn địa chỉ giao hàng');
     }
 
+    const orderCode = await generateOrderCode();
     const order = await Order.create({
+        orderCode,
         user: userId,
         items: orderItems,
         shippingAddress,
-        paymentMethod: 'COD',
+        paymentMethod,
+        paymentStatus: paymentMethod === 'COD' ? 'paid' : 'pending',
         totalAmount: totalAmount + Number(shippingFee || 0),
         shippingFee: Number(shippingFee || 0),
         notes: notes || '',
@@ -57,7 +75,18 @@ export const createOrderService = async (userId, { addressId, notes, items: manu
         await clearCartService(userId);
     }
 
-    return order;
+    if (paymentMethod === 'VNPAY') {
+        try {
+            const { payosCode, checkoutUrl } = await createPaymentLink(order);
+            order.payosOrderCode = payosCode;
+            await order.save();
+            return { order, paymentUrl: checkoutUrl };
+        } catch (e) {
+            return { order, paymentUrl: null };
+        }
+    }
+
+    return { order, paymentUrl: null };
 };
 
 export const getUserOrdersService = async (userId, { page = 1, limit = 10, status } = {}) => {
@@ -108,9 +137,10 @@ export const cancelOrderService = async (userId, orderId, reason = '') => {
 };
 
 // Admin services
-export const getAllOrdersService = async ({ page = 1, limit = 20, status } = {}) => {
+export const getAllOrdersService = async ({ page = 1, limit = 20, status, orderCode } = {}) => {
     const query = {};
     if (status) query.status = status;
+    if (orderCode) query.orderCode = { $regex: orderCode, $options: 'i' };
     const skip = (page - 1) * limit;
     const [orders, total] = await Promise.all([
         Order.find(query).populate('user', 'fullName email').sort({ createdAt: -1 }).skip(skip).limit(limit),
@@ -145,10 +175,33 @@ export const updateOrderStatusService = async (adminId, orderId, status, note = 
         for (const item of order.items) {
             await Product.findByIdAndUpdate(item.product, { $inc: { sold: item.quantity } });
         }
+        order.paymentStatus = 'paid';
     }
 
     order.status = status;
     order.statusHistory.push({ status, note, changedBy: adminId });
     await order.save();
     return order;
+};
+
+export const getRevenueService = async ({ year } = {}) => {
+    const targetYear = parseInt(year) || new Date().getFullYear();
+    const start = new Date(targetYear, 0, 1);
+    const end = new Date(targetYear + 1, 0, 1);
+
+    const [deliveredOrders, pendingCount, cancelledCount] = await Promise.all([
+        Order.find({ status: 'delivered', createdAt: { $gte: start, $lt: end } }).select('totalAmount shippingFee createdAt'),
+        Order.countDocuments({ status: { $in: ['pending', 'confirmed', 'preparing', 'shipping'] } }),
+        Order.countDocuments({ status: 'cancelled', createdAt: { $gte: start, $lt: end } }),
+    ]);
+
+    const monthly = Array.from({ length: 12 }, (_, i) => ({ month: i + 1, revenue: 0, orders: 0 }));
+    for (const order of deliveredOrders) {
+        const m = order.createdAt.getMonth();
+        monthly[m].revenue += order.totalAmount;
+        monthly[m].orders++;
+    }
+
+    const totalRevenue = deliveredOrders.reduce((s, o) => s + o.totalAmount, 0);
+    return { monthly, totalRevenue, totalOrders: deliveredOrders.length, pendingCount, cancelledCount, year: targetYear };
 };

@@ -15,6 +15,7 @@ import orderRoute from "./routes/orderRoute.js";
 import promotionRoute from "./routes/promotionRoute.js";
 import blogRoute from "./routes/blogRoute.js";
 import testimonialRoute from "./routes/testimonialRoute.js";
+import chatRoute from "./routes/chatRoute.js";
 import auth from './middleware/auth.js';
 
 const app = express();
@@ -55,6 +56,7 @@ app.use('/v1/api/orders', auth, orderRoute);
 app.use('/v1/api/promotions', promotionRoute);
 app.use('/v1/api/blogs', blogRoute);
 app.use('/v1/api/testimonials', testimonialRoute);
+app.use('/v1/api/chat', auth, chatRoute);
 
 (async () => {
     try {

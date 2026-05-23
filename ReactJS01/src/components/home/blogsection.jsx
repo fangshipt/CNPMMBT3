@@ -8,66 +8,81 @@ function BlogSection() {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    getPublishedBlogsApi({ limit: 3 }).then((res) => {
-      if (res?.EC === 0) setPosts(res.data);
+    getPublishedBlogsApi({ limit: 3, sortBy: "-publishedAt" }).then((res) => {
+      if (res?.EC === 0) setPosts(res.data || []);
     });
   }, []);
 
   if (posts.length === 0) return null;
 
   return (
-    <section id="latest-blog" className="my-5">
-      <div className="container py-5 my-5">
-        <div className="section-header d-md-flex justify-content-between align-items-center mb-3">
-          <h2 className="display-3 fw-normal">Bài viết mới nhất</h2>
+    <section style={{ background: "#fff", padding: "56px 0" }}>
+      <div className="container">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 28 }}>
           <div>
-            <Link to="/blog" className="btn btn-outline-dark btn-lg rounded-1">
-              Xem tất cả
-              <svg width="24" height="24" viewBox="0 0 24 24" className="mb-1">
-                <use xlinkHref="#arrow-right"></use>
-              </svg>
-            </Link>
+            <p style={{ color: "#c8a87a", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "2px", fontWeight: 600, marginBottom: 6 }}>
+              Kiến thức thú cưng
+            </p>
+            <h2 style={{ color: "#3a2e28", fontWeight: 700, fontSize: "1.7rem", lineHeight: 1.2, margin: 0 }}>
+              Bài viết mới nhất
+            </h2>
           </div>
+          <Link
+            to="/blog"
+            style={{ fontSize: "0.85rem", color: "#5a4a3f", border: "1.5px solid #5a4a3f", borderRadius: 20, padding: "6px 18px", textDecoration: "none" }}
+          >
+            Xem tất cả →
+          </Link>
         </div>
 
-        <div className="row">
+        <div className="row g-4">
           {posts.map((post) => {
             const date = new Date(post.publishedAt || post.createdAt);
-            const day = String(date.getDate()).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, "0");
             const month = MONTHS_VI[date.getMonth()];
             return (
-              <div className="col-md-4 my-4 my-md-0" key={post._id}>
-                <article className="card blog-card position-relative h-100">
-                  <div className="blog-date position-absolute">
-                    <h3 className="secondary-font text-primary m-0">{day}</h3>
-                    <p className="secondary-font fs-6 m-0">{month}</p>
-                  </div>
-
-                  <Link to={`/blog/${post.slug}`}>
-                    {post.image ? (
-                      <img
-                        src={getImageUrl(post.image)}
-                        className="img-fluid rounded-4 blog-image"
-                        alt={post.title}
-                        style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover' }}
-                      />
-                    ) : (
-                      <div className="rounded-4 blog-image" style={{ background: '#f0e8df', width: '100%', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <iconify-icon icon="ph:newspaper" style={{ fontSize: '3rem', color: '#c8a87a' }}></iconify-icon>
+              <div key={post._id} className="col-md-4">
+                <Link to={`/blog/${post.slug}`} style={{ textDecoration: "none" }}>
+                  <div
+                    style={{ borderRadius: 14, overflow: "hidden", background: "#f9f3ec", height: "100%", display: "flex", flexDirection: "column", transition: "box-shadow 0.22s" }}
+                    onMouseEnter={e => e.currentTarget.style.boxShadow = "0 6px 22px rgba(0,0,0,0.10)"}
+                    onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}
+                  >
+                    {/* Image */}
+                    <div style={{ position: "relative", overflow: "hidden" }}>
+                      {post.image ? (
+                        <img
+                          src={getImageUrl(post.image)}
+                          alt={post.title}
+                          style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover", display: "block" }}
+                        />
+                      ) : (
+                        <div style={{ background: "#e8ddd5", width: "100%", aspectRatio: "16/9", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <iconify-icon icon="ph:newspaper" style={{ fontSize: "2.5rem", color: "#c8a87a" }}></iconify-icon>
+                        </div>
+                      )}
+                      {/* Date badge */}
+                      <div style={{ position: "absolute", top: 12, left: 12, background: "#fff", borderRadius: 8, padding: "6px 10px", textAlign: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}>
+                        <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#ff6b35", lineHeight: 1 }}>{day}</div>
+                        <div style={{ fontSize: "0.7rem", color: "#5a4a3f", fontWeight: 600 }}>{month}</div>
                       </div>
-                    )}
-                  </Link>
-
-                  <div className="card-body p-0">
-                    <Link to={`/blog/${post.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                      <h3 className="card-title pt-4 pb-3 m-0">{post.title}</h3>
-                    </Link>
-                    <div className="card-text">
-                      {post.excerpt && <p className="blog-paragraph fs-6">{post.excerpt}</p>}
-                      <Link to={`/blog/${post.slug}`} className="blog-read">Đọc tiếp</Link>
+                    </div>
+                    {/* Body */}
+                    <div style={{ padding: "18px 18px 22px", flex: 1, display: "flex", flexDirection: "column" }}>
+                      <h6 style={{ fontSize: "0.95rem", color: "#3a2e28", fontWeight: 600, lineHeight: 1.5, marginBottom: 8, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                        {post.title}
+                      </h6>
+                      {post.excerpt && (
+                        <p style={{ fontSize: "0.83rem", color: "#6b7280", lineHeight: 1.6, marginBottom: 14, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                          {post.excerpt}
+                        </p>
+                      )}
+                      <span style={{ fontSize: "0.82rem", color: "#c8a87a", fontWeight: 600, marginTop: "auto" }}>
+                        Đọc tiếp →
+                      </span>
                     </div>
                   </div>
-                </article>
+                </Link>
               </div>
             );
           })}

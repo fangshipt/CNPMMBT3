@@ -12,8 +12,7 @@ import {
   canReview,
   addReview,
 } from "../controllers/productController.js";
-import { isAdmin } from "../middleware/auth.js";
-import auth from "../middleware/auth.js";
+import auth, { isAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -22,7 +21,7 @@ router.get("/", getProducts);
 router.get("/top-sellers", getTopSellers);
 router.get("/most-viewed", getMostViewed);
 router.get("/:id/related", getRelatedProducts);
-router.get("/:id/can-review", canReview);
+router.get("/:id/can-review", auth, canReview);
 router.post("/:id/reviews", auth, addReview);
 router.get("/:idOrSlug", getProductByIdOrSlug);
 

@@ -12,8 +12,8 @@ function Categories() {
   }, []);
 
   return (
-    <section id="categories">
-      <div className="container pt-4 pb-8">
+    <section id="categories" style={{ background: "#fff" }}>
+      <div className="container py-5">
         <div className="categories-row">
           {categories.map((cat) => (
             <Link

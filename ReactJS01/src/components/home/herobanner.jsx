@@ -6,21 +6,24 @@ import banner3 from "../../assets/banner-img4.png";
 const slides = [
   {
     image: banner1,
-    offer: "Ưu đãi 10 - 20%",
-    title: "Chọn đồ dễ hơn cho",
-    highlight: "bé cưng",
+    tag: "Dành cho thú cưng của bạn",
+    title: "Mọi thứ bạn cần,",
+    highlight: "đều ở đây",
+    desc: "Từ thức ăn đến phụ kiện — luôn được chọn lọc kỹ.",
   },
   {
     image: banner2,
-    offer: "Gợi ý mới mỗi tuần",
-    title: "Món ngon lành cho",
-    highlight: "bữa ăn nhỏ",
+    tag: "Dinh dưỡng & sức khỏe",
+    title: "Bữa ăn ngon cho",
+    highlight: "những người bạn nhỏ",
+    desc: "Thực phẩm chất lượng, phù hợp từng giống loài — vì sức khỏe cho thú cưng của bạn.",
   },
   {
     image: banner3,
-    offer: "Hàng mới về",
-    title: "Phụ kiện xinh cho",
-    highlight: "ngày thường",
+    tag: "Phụ kiện & đồ chơi",
+    title: "Những khoảnh khắc vui",
+    highlight: "bên thú cưng mỗi ngày",
+    desc: "Đồ chơi, vòng cổ, áo quần.",
   },
 ];
 
@@ -29,9 +32,8 @@ function HeroBanner() {
 
   useEffect(() => {
     const slideTimer = setInterval(() => {
-      setActiveSlide((currentSlide) => (currentSlide + 1) % slides.length);
-    }, 2500);
-
+      setActiveSlide((cur) => (cur + 1) % slides.length);
+    }, 3500);
     return () => clearInterval(slideTimer);
   }, []);
 
@@ -43,7 +45,7 @@ function HeroBanner() {
             {slides.map((slide, index) => (
               <div
                 className={`hero-slide py-5 ${activeSlide === index ? "active" : ""}`}
-                key={slide.image}
+                key={index}
                 aria-hidden={activeSlide !== index}
               >
                 <div className="row banner-content align-items-center">
@@ -52,33 +54,29 @@ function HeroBanner() {
                   </div>
 
                   <div className="content-wrapper col-md-7 p-5 mb-5">
-                    <div className="secondary-font text-primary text-uppercase mb-4">
-                      {slide.offer}
+                    <div
+                      className="secondary-font text-primary text-uppercase mb-3"
+                      style={{ fontSize: "0.85rem", letterSpacing: "2px" }}
+                    >
+                      {slide.tag}
                     </div>
 
-                    <h2 className="banner-title display-1 fw-normal">
+                    <h2 className="banner-title display-1 fw-normal mb-3">
                       {slide.title}{" "}
                       <span className="text-primary">{slide.highlight}</span>
                     </h2>
 
-                    <a
-                      href="#"
-                      className="btn btn-outline-dark rounded-1 text-uppercase"
-                      style={{ padding: "0.6rem 1.5rem", fontSize: "0.9rem" }}
-                      tabIndex={activeSlide === index ? 0 : -1}
+                    <p
+                      style={{
+                        color: "#6b5a4e",
+                        fontSize: "1rem",
+                        lineHeight: 1.7,
+                        maxWidth: 420,
+                        marginTop: 8,
+                      }}
                     >
-                      Mua ngay
-
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        className="mb-1 ms-2"
-                        style={{ display: "inline" }}
-                      >
-                        <use xlinkHref="#arrow-right"></use>
-                      </svg>
-                    </a>
+                      {slide.desc}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -86,16 +84,16 @@ function HeroBanner() {
           </div>
 
           <div className="hero-slider-pagination mb-5">
-            {slides.map((slide, index) => (
+            {slides.map((_, index) => (
               <button
                 className={`swiper-pagination-bullet ${
                   activeSlide === index ? "swiper-pagination-bullet-active" : ""
                 }`}
-                key={slide.highlight}
+                key={index}
                 type="button"
                 aria-label={`Chuyển đến banner ${index + 1}`}
                 onClick={() => setActiveSlide(index)}
-              ></button>
+              />
             ))}
           </div>
         </div>

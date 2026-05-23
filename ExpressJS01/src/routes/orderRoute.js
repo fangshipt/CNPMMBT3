@@ -11,6 +11,7 @@ router.get('/my/:id', orderController.getOrderDetail);
 router.patch('/my/:id/cancel', orderController.cancelOrder);
 
 // Admin routes
+router.get('/admin/revenue', isAdmin, orderController.getRevenue);
 router.get('/admin', isAdmin, orderController.getAllOrders);
 router.patch('/admin/:id/status', isAdmin, orderController.updateOrderStatus);
 

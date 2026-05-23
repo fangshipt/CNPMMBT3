@@ -14,7 +14,7 @@ function AboutPage() {
         <div className="bg-white rounded-4 shadow-sm p-4 p-md-5">
           <div className="text-center mb-5">
             <iconify-icon icon="ph:paw-print" style={{ fontSize: '3rem', color: '#DEAD6F' }}></iconify-icon>
-            <h1 className="fw-normal mt-3 mb-2" style={{ color: '#3a2e28' }}>Về cửa hàng PetStore</h1>
+            <h1 className="fw-normal mt-3 mb-2" style={{ color: '#3a2e28' }}>Về cửa hàng FangShi Pet Shop</h1>
             <p className="text-muted">Nơi những người yêu thú cưng tìm thấy điều họ cần</p>
           </div>
 
@@ -22,7 +22,7 @@ function AboutPage() {
             <div className="col-md-6">
               <h4 className="fw-semibold mb-3" style={{ color: '#3a2e28' }}>Câu chuyện của chúng tôi</h4>
               <p className="text-muted" style={{ lineHeight: 1.8 }}>
-                PetStore được thành lập bởi những người yêu thú cưng với mong muốn mang đến cho các bé những sản phẩm chất lượng nhất.
+                FangShi Pet Shop được thành lập bởi những người yêu thú cưng với mong muốn mang đến cho các bé những sản phẩm chất lượng nhất.
                 Chúng tôi hiểu rằng thú cưng là một phần không thể thiếu trong gia đình, vì vậy mọi sản phẩm đều được chọn lọc kỹ càng để đảm bảo an toàn và phù hợp nhất.
               </p>
               <p className="text-muted" style={{ lineHeight: 1.8 }}>
@@ -31,7 +31,7 @@ function AboutPage() {
             </div>
             <div className="col-md-6">
               <div className="p-4 rounded-3 h-100" style={{ background: '#FFF8F0' }}>
-                <h5 className="fw-semibold mb-3" style={{ color: '#3a2e28' }}>Tại sao chọn PetStore?</h5>
+                <h5 className="fw-semibold mb-3" style={{ color: '#3a2e28' }}>Tại sao chọn FangShi Pet Shop?</h5>
                 {[
                   { icon: 'ph:check-circle', text: 'Sản phẩm được kiểm định chất lượng' },
                   { icon: 'ph:truck', text: 'Giao hàng nhanh, đóng gói cẩn thận' },

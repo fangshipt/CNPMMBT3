@@ -93,6 +93,11 @@ const addReviewApi = (productId, data) => axios.post(`/v1/api/products/${product
 const getWishlistApi = () => axios.get('/v1/api/user/wishlist');
 const toggleWishlistApi = (productId) => axios.post(`/v1/api/user/wishlist/${productId}`);
 
+// Account management APIs
+const updateProfileApi = (data) => axios.put('/v1/api/account/profile', data);
+const changePasswordApi = (data) => axios.put('/v1/api/account/password', data);
+const updateAvatarApi = (data) => axios.put('/v1/api/account/avatar', data);
+
 // Promotion APIs
 const getPromotionsApi = (params = {}) => axios.get('/v1/api/promotions', { params });
 const createPromotionApi = (data) => axios.post('/v1/api/promotions', data);
@@ -115,8 +120,19 @@ const createBlogApi = (data) => axios.post('/v1/api/blogs', data);
 const updateBlogApi = (id, data) => axios.put(`/v1/api/blogs/${id}`, data);
 const deleteBlogApi = (id) => axios.delete(`/v1/api/blogs/${id}`);
 
+// Revenue APIs
+const getRevenueApi = (year) => axios.get('/v1/api/orders/admin/revenue', { params: { year } });
+
+// Chat APIs
+const getUserChatApi = () => axios.get('/v1/api/chat/my');
+const sendUserMessageApi = (text) => axios.post('/v1/api/chat/my', { text });
+const getAllChatsApi = () => axios.get('/v1/api/chat/admin/all');
+const getAdminChatApi = (userId) => axios.get(`/v1/api/chat/admin/${userId}`);
+const adminReplyApi = (userId, text) => axios.post(`/v1/api/chat/admin/${userId}`, { text });
+
 export {
     createUserApi, loginApi, getUserApi,
+    updateProfileApi, changePasswordApi, updateAvatarApi,
     getProductsApi, getProductByIdOrSlugApi, getRelatedProductsApi, getCategoriesApi,
     createProductApi, updateProductApi, deleteProductApi,
     createCategoryApi, updateCategoryApi, deleteCategoryApi,
@@ -131,4 +147,6 @@ export {
     getPublishedBlogsApi, getBlogBySlugApi, getAdminBlogsApi, createBlogApi, updateBlogApi, deleteBlogApi,
     getPublicTestimonialsApi, getTestimonialStatusApi, createTestimonialApi,
     getAdminTestimonialsApi, updateTestimonialApprovalApi, deleteTestimonialApi,
+    getRevenueApi,
+    getUserChatApi, sendUserMessageApi, getAllChatsApi, getAdminChatApi, adminReplyApi,
 }

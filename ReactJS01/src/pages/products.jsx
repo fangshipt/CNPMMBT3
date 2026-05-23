@@ -5,14 +5,6 @@ import ProductCard from "../components/card/productCard";
 import Loading from "../components/common/loading";
 import TopProductsSection from "../components/product/topProductsSection";
 
-const PET_TYPES = [
-  { label: "Tất cả", value: "" },
-  { label: "Chó", value: "dog" },
-  { label: "Mèo", value: "cat" },
-  { label: "Chim", value: "bird" },
-  { label: "Cá", value: "fish" },
-];
-
 const SORT_OPTIONS = [
   { label: "Mới nhất", value: "-createdAt" },
   { label: "Bán chạy", value: "-sold" },
@@ -39,7 +31,6 @@ function ProductsPage() {
   const [searchInput, setSearchInput] = useState(searchParams.get("search") || "");
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "");
-  const [selectedPetType, setSelectedPetType] = useState(searchParams.get("petType") || "");
   const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") || "");
   const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") || "");
   const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "-createdAt");
@@ -61,7 +52,7 @@ function ProductsPage() {
   const isFetchingRef = useRef(false);
 
   // Build filter key to detect when filters change
-  const filterKey = [search, selectedCategory, selectedPetType, minPrice, maxPrice, sortBy, isBestSeller, isNewProduct, isOnSale].join("|");
+  const filterKey = [search, selectedCategory, minPrice, maxPrice, sortBy, isBestSeller, isNewProduct, isOnSale].join("|");
 
   // Fetch categories once
   useEffect(() => {
@@ -82,7 +73,6 @@ function ProductsPage() {
       const params = { page: pg, limit: 12, sortBy };
       if (search) params.search = search;
       if (selectedCategory) params.category = selectedCategory;
-      if (selectedPetType) params.petType = selectedPetType;
       if (minPrice) params.minPrice = minPrice;
       if (maxPrice) params.maxPrice = maxPrice;
       if (isBestSeller) params.isBestSeller = true;
@@ -118,7 +108,6 @@ function ProductsPage() {
     const params = {};
     if (search) params.search = search;
     if (selectedCategory) params.category = selectedCategory;
-    if (selectedPetType) params.petType = selectedPetType;
     if (minPrice) params.minPrice = minPrice;
     if (maxPrice) params.maxPrice = maxPrice;
     if (sortBy !== "-createdAt") params.sortBy = sortBy;
@@ -158,7 +147,6 @@ function ProductsPage() {
   };
 
   const changeCategory = (val) => setSelectedCategory(val);
-  const changePetType = (val) => setSelectedPetType(val);
   const changeSortBy = (val) => setSortBy(val);
   const changeBestSeller = (val) => setIsBestSeller(val);
   const changeNewProduct = (val) => setIsNewProduct(val);
@@ -167,11 +155,11 @@ function ProductsPage() {
 
   const resetFilters = () => {
     setSearch(""); setSearchInput(""); setSelectedCategory("");
-    setSelectedPetType(""); setMinPrice(""); setMaxPrice("");
+    setMinPrice(""); setMaxPrice("");
     setSortBy("-createdAt"); setIsBestSeller(false); setIsNewProduct(false); setIsOnSale(false);
   };
 
-  const hasActiveFilters = search || selectedCategory || selectedPetType || minPrice || maxPrice || isBestSeller || isNewProduct || isOnSale;
+  const hasActiveFilters = search || selectedCategory || minPrice || maxPrice || isBestSeller || isNewProduct || isOnSale;
   const activeCategory = categories.find((c) => c._id === selectedCategory);
 
   const chipStyle = { background: "#e8ddd5", color: "#5a4a3f", padding: "5px 12px", fontSize: "0.8rem" };
@@ -179,7 +167,7 @@ function ProductsPage() {
 
   return (
     <div style={{ background: "#F9F3EC", minHeight: "100vh" }}>
-      <div className="container py-5">
+      <div className="py-5" style={{ maxWidth: 1600, margin: "0 auto", padding: "40px 32px" }}>
         {/* Breadcrumb */}
         <nav aria-label="breadcrumb" className="mb-3">
           <ol className="breadcrumb">
@@ -235,12 +223,6 @@ function ProductsPage() {
                   <button style={chipBtnStyle} onClick={() => changeCategory("")}>×</button>
                 </span>
               )}
-              {selectedPetType && (
-                <span className="badge rounded-pill d-flex align-items-center" style={chipStyle}>
-                  {PET_TYPES.find((p) => p.value === selectedPetType)?.label}
-                  <button style={chipBtnStyle} onClick={() => changePetType("")}>×</button>
-                </span>
-              )}
               {isBestSeller && (
                 <span className="badge rounded-pill d-flex align-items-center" style={{ ...chipStyle, background: "#ff6b35", color: "#fff" }}>
                   Bán chạy<button style={{ ...chipBtnStyle, color: "#fff" }} onClick={() => changeBestSeller(false)}>×</button>
@@ -262,7 +244,7 @@ function ProductsPage() {
 
         <div className="row g-4">
           {/* Sidebar */}
-          <div className="col-lg-3">
+          <div className="col-xl-2 col-lg-3" style={{ minWidth: 200 }}>
             <FilterCard title="Danh mục">
               <div className="d-flex flex-column gap-1">
                 {[{ _id: "", name: "Tất cả danh mục" }, ...categories].map((cat) => (
@@ -271,20 +253,6 @@ function ProductsPage() {
                       onChange={() => changeCategory(cat._id)} />
                     <span style={{ color: selectedCategory === cat._id ? "#5a4a3f" : "#666", fontWeight: selectedCategory === cat._id ? 600 : 400 }}>
                       {cat.name}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </FilterCard>
-
-            <FilterCard title="Loại thú cưng">
-              <div className="d-flex flex-column gap-1">
-                {PET_TYPES.map((pt) => (
-                  <label key={pt.value} className="d-flex align-items-center gap-2" style={{ cursor: "pointer", padding: "4px 0" }}>
-                    <input type="radio" name="petType" checked={selectedPetType === pt.value}
-                      onChange={() => changePetType(pt.value)} />
-                    <span style={{ color: selectedPetType === pt.value ? "#5a4a3f" : "#666", fontWeight: selectedPetType === pt.value ? 600 : 400 }}>
-                      {pt.label}
                     </span>
                   </label>
                 ))}
@@ -327,7 +295,7 @@ function ProductsPage() {
           </div>
 
           {/* Product Grid */}
-          <div className="col-lg-9">
+          <div className="col-xl-10 col-lg-9">
             {/* Sort bar */}
             <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
               <span className="text-muted small">
@@ -353,7 +321,7 @@ function ProductsPage() {
               <>
                 <div className="row g-3">
                   {products.map((product) => (
-                    <div key={product._id} className="col-sm-6 col-lg-4">
+                    <div key={product._id} className="col-sm-6 col-lg-3">
                       <ProductCard product={product} />
                     </div>
                   ))}

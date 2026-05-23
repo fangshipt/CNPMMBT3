@@ -6,7 +6,7 @@ import {
 } from "antd";
 import {
   PlusOutlined, EditOutlined, DeleteOutlined, ReloadOutlined,
-  EyeOutlined, EyeInvisibleOutlined, UploadOutlined,
+  EyeOutlined, EyeInvisibleOutlined, UploadOutlined, SearchOutlined,
 } from "@ant-design/icons";
 import {
   getProductsApi, getCategoriesApi,
@@ -15,20 +15,14 @@ import {
 } from "../../../util/api";
 import { getImageUrl, formatPrice } from "../../../util/api";
 
-const PET_TYPES = [
-  { value: "dog", label: "Chó" },
-  { value: "cat", label: "Mèo" },
-  { value: "bird", label: "Chim" },
-  { value: "fish", label: "Cá" },
-  { value: "all", label: "Tất cả" },
-];
-
 function ProductManagement() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalProducts, setTotalProducts] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchName, setSearchName] = useState("");
+  const [filterCategory, setFilterCategory] = useState(undefined);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -38,14 +32,17 @@ function ProductManagement() {
 
   const fetchProducts = useCallback(() => {
     setLoading(true);
-    getProductsApi({ page: currentPage, limit: 10, isActive: "all" }).then((res) => {
+    const params = { page: currentPage, limit: 10, isActive: "all" };
+    if (searchName.trim()) params.search = searchName.trim();
+    if (filterCategory) params.category = filterCategory;
+    getProductsApi(params).then((res) => {
       if (res.EC === 0) {
         setProducts(res.data);
         setTotalProducts(res.pagination?.totalProducts ?? 0);
       }
       setLoading(false);
     });
-  }, [currentPage]);
+  }, [currentPage, searchName, filterCategory]);
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
@@ -83,7 +80,6 @@ function ProductManagement() {
       discountPrice: product.discountPrice,
       stock: product.stock,
       category: product.category?._id,
-      petType: product.petType || undefined,
       isBestSeller: product.isBestSeller,
       isNewProduct: product.isNewProduct,
       isFeatured: product.isFeatured,
@@ -207,10 +203,17 @@ function ProductManagement() {
       render: (v) => formatPrice(v),
     },
     {
-      title: "Giá giảm",
-      dataIndex: "discountPrice",
-      width: 120,
-      render: (v) => (v > 0 ? <span style={{ color: "#e74c3c" }}>{formatPrice(v)}</span> : "-"),
+      title: "Giá bán",
+      width: 140,
+      render: (_, r) =>
+        r.discountPrice > 0 ? (
+          <div>
+            <span style={{ color: "#e74c3c", fontWeight: 600 }}>{formatPrice(r.discountPrice)}</span>
+            <div style={{ fontSize: "0.75rem", color: "#aaa", textDecoration: "line-through" }}>{formatPrice(r.price)}</div>
+          </div>
+        ) : (
+          <span>{formatPrice(r.price)}</span>
+        ),
     },
     {
       title: "Tồn kho",
@@ -277,7 +280,7 @@ function ProductManagement() {
 
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="d-flex justify-content-between align-items-center mb-3">
         <div>
           <h4 className="mb-0" style={{ color: "#3a2e28", fontWeight: 700 }}>Quản lý sản phẩm</h4>
           <small style={{ color: "#8a7060" }}>Tổng: {totalProducts} sản phẩm</small>
@@ -290,6 +293,26 @@ function ProductManagement() {
             Thêm sản phẩm
           </Button>
         </Space>
+      </div>
+
+      {/* Filter bar */}
+      <div className="d-flex flex-wrap gap-2 mb-3">
+        <Input
+          placeholder="Tìm theo tên sản phẩm..."
+          prefix={<SearchOutlined style={{ color: "#bbb" }} />}
+          style={{ width: 260 }}
+          value={searchName}
+          onChange={(e) => { setSearchName(e.target.value); setCurrentPage(1); }}
+          allowClear
+        />
+        <Select
+          allowClear
+          placeholder="Lọc theo danh mục"
+          style={{ width: 200 }}
+          value={filterCategory}
+          onChange={(v) => { setFilterCategory(v); setCurrentPage(1); }}
+          options={categories.map((c) => ({ value: c._id, label: c.name }))}
+        />
       </div>
 
       <div
@@ -393,14 +416,6 @@ function ProductManagement() {
             <div className="col-md-4">
               <Form.Item label="Tồn kho" name="stock">
                 <InputNumber style={{ width: "100%" }} min={0} placeholder="0" />
-              </Form.Item>
-            </div>
-          </div>
-
-          <div className="row g-3">
-            <div className="col-md-6">
-              <Form.Item label="Loại thú cưng" name="petType">
-                <Select placeholder="Chọn loại thú cưng" allowClear options={PET_TYPES} />
               </Form.Item>
             </div>
           </div>

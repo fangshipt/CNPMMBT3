@@ -1,5 +1,6 @@
 import Header from './components/layout/header';
 import Footer from './components/layout/footer';
+import ChatWidget from './components/chat/chatWidget';
 import { Outlet } from 'react-router-dom';
 import './App.css';
 
@@ -11,6 +12,7 @@ function App() {
         <Outlet />
       </main>
       <Footer />
+      <ChatWidget />
     </>
   );
 }

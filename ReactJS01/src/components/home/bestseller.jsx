@@ -2,74 +2,86 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getProductsApi, getImageUrl, formatPrice } from "../../util/api";
 
-function bestSeller() {
+function HomeProductCard({ product }) {
+  const salePrice = product.discountPrice > 0 ? product.discountPrice : product.price;
+  const discount = product.discountPrice > 0
+    ? Math.round((1 - product.discountPrice / product.price) * 100) : 0;
+  return (
+    <Link to={`/products/${product.slug || product._id}`} style={{ textDecoration: "none" }}>
+      <div
+        style={{ borderRadius: 14, overflow: "hidden", background: "#fff", boxShadow: "0 2px 10px rgba(0,0,0,0.06)", transition: "box-shadow 0.22s", height: "100%", display: "flex", flexDirection: "column" }}
+        onMouseEnter={e => e.currentTarget.style.boxShadow = "0 6px 22px rgba(0,0,0,0.12)"}
+        onMouseLeave={e => e.currentTarget.style.boxShadow = "0 2px 10px rgba(0,0,0,0.06)"}
+      >
+        <div style={{ position: "relative", paddingTop: "100%", overflow: "hidden", background: "#f9f3ec" }}>
+          <img
+            src={getImageUrl(product.images?.[0])}
+            alt={product.name}
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+          />
+          {discount > 0 && (
+            <span style={{ position: "absolute", top: 10, left: 10, background: "#e74c3c", color: "#fff", borderRadius: 6, padding: "2px 8px", fontSize: "0.73rem", fontWeight: 700 }}>
+              -{discount}%
+            </span>
+          )}
+          {product.sold > 0 && (
+            <span style={{ position: "absolute", bottom: 10, left: 10, background: "rgba(58,46,40,0.75)", color: "#fff", borderRadius: 6, padding: "2px 8px", fontSize: "0.7rem" }}>
+              Đã bán {product.sold}
+            </span>
+          )}
+        </div>
+        <div style={{ padding: "14px 14px 16px", flex: 1, display: "flex", flexDirection: "column" }}>
+          <p style={{ fontSize: "0.72rem", color: "#a0856e", marginBottom: 5, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+            {product.category?.name}
+          </p>
+          <h6 style={{ fontSize: "0.9rem", color: "#3a2e28", fontWeight: 500, lineHeight: 1.45, marginBottom: "auto", paddingBottom: 10, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+            {product.name}
+          </h6>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+            <span style={{ color: "#ff6b35", fontWeight: 700, fontSize: "1rem" }}>{formatPrice(salePrice)}</span>
+            {discount > 0 && <span style={{ color: "#bbb", textDecoration: "line-through", fontSize: "0.8rem" }}>{formatPrice(product.price)}</span>}
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+function BestSeller() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    getProductsApi({ isBestSeller: true, limit: 4 }).then((res) => {
-      if (res.EC === 0) setProducts(res.data);
+    getProductsApi({ sortBy: "-sold", limit: 5 }).then((res) => {
+      if (res?.EC === 0) setProducts((res.data || []).filter(p => p.sold > 0));
     });
   }, []);
 
+  if (products.length === 0) return null;
+
   return (
-    <section id="best-selling" className="my-5 overflow-hidden">
-      <div className="container py-5 mb-5">
-        <div className="section-header d-md-flex justify-content-between align-items-center mb-3">
-          <h2 className="display-3 fw-normal">Sản phẩm bán chạy nhất</h2>
+    <section style={{ background: "#f9f3ec", padding: "56px 0" }}>
+      <div className="container">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 28 }}>
           <div>
-            <Link to="/products?isBestSeller=true" className="btn btn-outline-dark btn-lg rounded-1">
-              Xem thêm
-              <svg width="24" height="24" viewBox="0 0 24 24" className="mb-1">
-                <use xlinkHref="#arrow-right"></use>
-              </svg>
-            </Link>
+            <p style={{ color: "#c8a87a", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "2px", fontWeight: 600, marginBottom: 6 }}>
+              Được yêu thích nhất
+            </p>
+            <h2 style={{ color: "#3a2e28", fontWeight: 700, fontSize: "1.7rem", lineHeight: 1.2, margin: 0 }}>
+              Sản phẩm bán chạy
+            </h2>
           </div>
+          <Link
+            to="/products?sortBy=-sold"
+            style={{ fontSize: "0.85rem", color: "#5a4a3f", border: "1.5px solid #5a4a3f", borderRadius: 20, padding: "6px 18px", textDecoration: "none" }}
+          >
+            Xem thêm →
+          </Link>
         </div>
 
-        <div className="row g-4">
-          {products.map((item) => (
-            <div key={item._id} className="col-md-6 col-lg-3">
-              <article className="card product-showcase-card position-relative h-100">
-                {item.discountPrice > 0 && (
-                  <div className="product-badge position-absolute">Giảm giá</div>
-                )}
-
-                <Link to={`/products/${item.slug || item._id}`}>
-                  <img
-                    src={getImageUrl(item.images?.[0])}
-                    className="img-fluid rounded-4 product-showcase-image"
-                    alt={item.name}
-                  />
-                </Link>
-
-                <div className="card-body px-0 pb-0 d-flex flex-column">
-                  <Link to={`/products/${item.slug || item._id}`} className="text-decoration-none">
-                    <h3 className="card-title pt-4 m-0">{item.name}</h3>
-                  </Link>
-
-                  <div className="card-text flex-grow-1">
-                    <span className="rating secondary-font">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <iconify-icon icon="clarity:star-solid" class="text-primary" key={star}></iconify-icon>
-                      ))}
-                      {" "}{item.rating}
-                    </span>
-
-                    <h3 className="secondary-font text-primary product-price">
-                      {formatPrice(item.discountPrice > 0 ? item.discountPrice : item.price)}
-                    </h3>
-
-                    <div className="d-flex flex-wrap gap-2 mt-3">
-                      <Link to={`/products/${item.slug || item._id}`} className="btn-cart px-3 py-2" style={{ fontSize: "0.9rem", minHeight: "40px" }}>
-                        <h6 className="m-0">Mua</h6>
-                      </Link>
-                      <a href="#" className="btn-wishlist px-3 py-2" style={{ minHeight: "40px" }}>
-                        <iconify-icon icon="fluent:heart-28-filled" class="fs-6"></iconify-icon>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </article>
+        <div className="row g-3 row-cols-2 row-cols-md-3 row-cols-lg-5">
+          {products.map((p) => (
+            <div key={p._id} className="col">
+              <HomeProductCard product={p} />
             </div>
           ))}
         </div>
@@ -78,4 +90,4 @@ function bestSeller() {
   );
 }
 
-export default bestSeller;
+export default BestSeller;

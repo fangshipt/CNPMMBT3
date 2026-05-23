@@ -18,6 +18,7 @@ const auth = (req, res, next) => {
         const decoded = jwt.verify(token, jwtSecret);
 
         req.user = {
+            _id: decoded.id,
             id: decoded.id,
             email: decoded.email,
             role: decoded.role,
@@ -44,6 +45,7 @@ const optionalAuth = (req, res, next) => {
         const decoded = jwt.verify(token, jwtSecret);
 
         req.user = {
+            _id: decoded.id,
             id: decoded.id,
             email: decoded.email,
             role: decoded.role,

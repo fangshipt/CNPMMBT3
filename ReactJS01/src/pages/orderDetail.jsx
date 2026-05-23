@@ -73,7 +73,7 @@ function OrderDetailPage() {
                         <iconify-icon icon="ph:arrow-left" class="me-1"></iconify-icon>Đơn hàng của tôi
                     </Link>
                     <span className="text-muted">/</span>
-                    <span style={{ color: '#3a2e28', fontSize: '0.9rem' }}>#{order._id.slice(-8).toUpperCase()}</span>
+                    <span style={{ color: '#3a2e28', fontSize: '0.9rem' }}>{order.orderCode || '#' + order._id.slice(-8).toUpperCase()}</span>
                 </div>
 
                 <div className="row g-4">
@@ -179,7 +179,10 @@ function OrderDetailPage() {
                             <h5 className="fw-semibold mb-3" style={{ color: '#3a2e28' }}>Thông tin thanh toán</h5>
                             <div className="d-flex justify-content-between mb-2">
                                 <span className="text-muted small">Phương thức</span>
-                                <Tag color="blue">COD - Tiền mặt</Tag>
+                                {order.paymentMethod === 'VNPAY'
+                                    ? <Tag color="blue">VNPay - Thanh toán online</Tag>
+                                    : <Tag color="default">COD - Tiền mặt</Tag>
+                                }
                             </div>
                             <div className="d-flex justify-content-between">
                                 <span className="text-muted small">Tổng tiền</span>

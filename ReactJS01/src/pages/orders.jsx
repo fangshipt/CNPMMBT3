@@ -73,7 +73,7 @@ function OrdersPage() {
                                 <div key={order._id} className="bg-white rounded-4 shadow-sm p-4 mb-3">
                                     <div className="d-flex flex-wrap justify-content-between align-items-center mb-3">
                                         <div>
-                                            <span className="text-muted small me-3">#{order._id.slice(-8).toUpperCase()}</span>
+                                            <span className="text-muted small me-3">{order.orderCode || '#' + order._id.slice(-8).toUpperCase()}</span>
                                             <span className="text-muted small">{formatDate(order.createdAt)}</span>
                                         </div>
                                         <Tag color={cfg.color} style={{ fontSize: '0.85rem', padding: '2px 12px' }}>{cfg.label}</Tag>
@@ -89,10 +89,13 @@ function OrdersPage() {
                                     </div>
 
                                     <div className="d-flex justify-content-between align-items-center">
-                                        <div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                                             <span className="text-muted small">Tổng tiền: </span>
                                             <strong className="text-primary">{formatPrice(order.totalAmount)}</strong>
-                                            <span className="ms-2 text-muted small">• COD</span>
+                                            {order.paymentMethod === 'VNPAY'
+                                                ? <Tag color="blue" style={{ margin: 0, fontSize: '0.75rem' }}>VNPay</Tag>
+                                                : <Tag color="default" style={{ margin: 0, fontSize: '0.75rem' }}>COD</Tag>
+                                            }
                                         </div>
                                         <Link to={`/orders/${order._id}`}>
                                             <button className="btn btn-sm btn-outline-primary rounded-2">Xem chi tiết</button>

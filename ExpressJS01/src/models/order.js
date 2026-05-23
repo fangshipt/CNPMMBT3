@@ -15,6 +15,7 @@ const statusHistorySchema = new mongoose.Schema({
 }, { timestamps: true, _id: false });
 
 const orderSchema = new mongoose.Schema({
+    orderCode: { type: String, unique: true, sparse: true },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     items: [orderItemSchema],
     shippingAddress: {
@@ -25,7 +26,9 @@ const orderSchema = new mongoose.Schema({
         ward: { type: String, required: true },
         detail: { type: String, required: true },
     },
-    paymentMethod: { type: String, enum: ['COD'], default: 'COD' },
+    paymentMethod: { type: String, enum: ['COD', 'VNPAY'], default: 'COD' },
+    paymentStatus: { type: String, enum: ['pending', 'paid', 'failed', 'cancelled'], default: 'pending' },
+    payosOrderCode: { type: Number },
     totalAmount: { type: Number, required: true },
     shippingFee: { type: Number, default: 0 },
     status: {

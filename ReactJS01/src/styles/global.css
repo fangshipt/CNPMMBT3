@@ -2,3 +2,42 @@
     margin: 0;
     padding: 0;
 }
+
+/* Blog HTML content styles */
+.blog-content h1,
+.blog-content h2,
+.blog-content h3,
+.blog-content h4 {
+    color: #3a2e28;
+    font-weight: 600;
+    margin-top: 1.6rem;
+    margin-bottom: 0.75rem;
+}
+.blog-content h2 { font-size: 1.35rem; }
+.blog-content h3 { font-size: 1.1rem; }
+.blog-content p  { margin-bottom: 0.9rem; color: #5a4a3f; }
+.blog-content ul,
+.blog-content ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+.blog-content li { margin-bottom: 0.35rem; color: #5a4a3f; }
+.blog-content strong { color: #3a2e28; }
+.blog-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    font-size: 0.93rem;
+}
+.blog-content th,
+.blog-content td {
+    border: 1px solid #e0d5ca;
+    padding: 8px 12px;
+    text-align: left;
+}
+.blog-content th {
+    background: #FFF8F0;
+    color: #3a2e28;
+    font-weight: 600;
+}
+.blog-content tr:nth-child(even) td { background: #fdfaf7; }

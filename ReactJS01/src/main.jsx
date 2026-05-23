@@ -25,6 +25,7 @@ import BlogDetailPage from './pages/blogDetail.jsx';
 import ContactPage from './pages/contact.jsx';
 import AboutPage from './pages/about.jsx';
 import ServicesPage from './pages/services.jsx';
+import PaymentResultPage from './pages/paymentResult.jsx';
 
 import AdminLayout from './pages/admin/adminLayout.jsx';
 import ProductManagement from './pages/admin/products/productManagement.jsx';
@@ -32,6 +33,8 @@ import CategoryManagement from './pages/admin/categories/categoryManagement.jsx'
 import OrderManagement from './pages/admin/orders/orderManagement.jsx';
 import PromotionManagement from './pages/admin/promotions/promotionManagement.jsx';
 import BlogManagement from './pages/admin/blogs/blogManagement.jsx';
+import RevenueManagement from './pages/admin/revenue/revenueManagement.jsx';
+import ChatManagement from './pages/admin/chat/chatManagement.jsx';
 import ProtectedRoute from './components/admin/protectedRoute.jsx';
 
 import { AuthWrapper } from './components/context/authContext.jsx';
@@ -58,6 +61,7 @@ const router = createBrowserRouter([
             { path: "contact", element: <ContactPage /> },
             { path: "about", element: <AboutPage /> },
             { path: "services", element: <ServicesPage /> },
+            { path: "payment/result", element: <PaymentResultPage /> },
         ]
     },
     { path: "register", element: <RegisterPage /> },
@@ -76,6 +80,8 @@ const router = createBrowserRouter([
             { path: "orders", element: <OrderManagement /> },
             { path: "promotions", element: <PromotionManagement /> },
             { path: "blogs", element: <BlogManagement /> },
+            { path: "revenue", element: <RevenueManagement /> },
+            { path: "chat", element: <ChatManagement /> },
         ]
     },
 ]);

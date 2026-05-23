@@ -2,8 +2,8 @@ import * as orderService from '../services/orderService.js';
 
 export const createOrder = async (req, res) => {
     try {
-        const order = await orderService.createOrderService(req.user.id, req.body);
-        return res.status(201).json({ EC: 0, EM: 'Đặt hàng thành công', data: order });
+        const result = await orderService.createOrderService(req.user.id, req.body);
+        return res.status(201).json({ EC: 0, EM: 'Đặt hàng thành công', data: result });
     } catch (e) {
         return res.status(400).json({ EC: 1, EM: e.message });
     }
@@ -44,11 +44,12 @@ export const cancelOrder = async (req, res) => {
 // Admin controllers
 export const getAllOrders = async (req, res) => {
     try {
-        const { page, limit, status } = req.query;
+        const { page, limit, status, orderCode } = req.query;
         const result = await orderService.getAllOrdersService({
             page: Number(page) || 1,
             limit: Number(limit) || 20,
             status,
+            orderCode,
         });
         return res.json({ EC: 0, EM: 'success', data: result });
     } catch (e) {
@@ -64,5 +65,14 @@ export const updateOrderStatus = async (req, res) => {
         return res.json({ EC: 0, EM: 'Đã cập nhật trạng thái đơn hàng', data: order });
     } catch (e) {
         return res.status(400).json({ EC: 1, EM: e.message });
+    }
+};
+
+export const getRevenue = async (req, res) => {
+    try {
+        const result = await orderService.getRevenueService({ year: req.query.year });
+        return res.json({ EC: 0, EM: 'success', data: result });
+    } catch (e) {
+        return res.status(500).json({ EC: -1, EM: e.message });
     }
 };

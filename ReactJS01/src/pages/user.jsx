@@ -1,68 +1,262 @@
-import { notification, Table, Tag } from "antd";
+import { useState, useContext, useRef } from "react";
+import { Form, Input, Button, message, Upload, Avatar, Tabs, Spin } from "antd";
+import { UserOutlined, LockOutlined, CameraOutlined } from "@ant-design/icons";
+import { AuthContext } from "../components/context/authContext";
+import { updateProfileApi, changePasswordApi, updateAvatarApi } from "../util/api";
+import axios from "../util/axios.customize";
 
-import { useEffect, useState } from "react";
+const AccountPage = () => {
+    const { auth, setAuth } = useContext(AuthContext);
+    const user = auth?.user || {};
+    const [profileLoading, setProfileLoading] = useState(false);
+    const [pwdLoading, setPwdLoading] = useState(false);
+    const [avatarLoading, setAvatarLoading] = useState(false);
+    const [avatarUrl, setAvatarUrl] = useState(user.avatar || "");
+    const fileRef = useRef(null);
 
-import { getUserApi } from "../util/api";
-
-const UserPage = () => {
-    const [dataSource, setDataSource] = useState([]);
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            const res = await getUserApi();
-
-            if (res && Array.isArray(res)) {
-                setDataSource(res);
-            } else if (res?.EC === 0 && Array.isArray(res.data)) {
-                setDataSource(res.data);
-            } else {
-                notification.error({
-                    message: "Không tải được dữ liệu",
-                    description: res?.EM || res?.message || "Bạn thử tải lại trang sau ít phút nhé."
-                });
-            }
-        };
-
-        fetchUser();
-    }, []);
-
-    const columns = [
-        {
-            title: 'Mã người dùng',
-            dataIndex: '_id',
-            ellipsis: true,
-        },
-        {
-            title: 'Email',
-            dataIndex: 'email',
-        },
-        {
-            title: 'Tên',
-            dataIndex: 'name',
-            render: (name) => name || "Chưa cập nhật",
-        },
-        {
-            title: 'Vai trò',
-            dataIndex: 'role',
-            render: (role) => <Tag color="gold">{role || "Người dùng"}</Tag>,
+    const handleUpdateProfile = async (values) => {
+        setProfileLoading(true);
+        const res = await updateProfileApi({ fullName: values.fullName, phone: values.phone }).catch(() => null);
+        setProfileLoading(false);
+        if (res?.EC === 0) {
+            message.success("Cập nhật thông tin thành công!");
+            setAuth(prev => ({
+                ...prev,
+                user: { ...prev.user, name: values.fullName, fullName: values.fullName }
+            }));
+        } else {
+            message.error(res?.EM || "Cập nhật thất bại");
         }
+    };
+
+    const handleChangePassword = async (values) => {
+        setPwdLoading(true);
+        const res = await changePasswordApi({
+            currentPassword: values.currentPassword,
+            newPassword: values.newPassword,
+        }).catch(() => null);
+        setPwdLoading(false);
+        if (res?.EC === 0) {
+            message.success("Đổi mật khẩu thành công!");
+        } else {
+            message.error(res?.EM || "Đổi mật khẩu thất bại");
+        }
+    };
+
+    const handleAvatarChange = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        if (!file.type.startsWith("image/")) {
+            message.error("Vui lòng chọn file ảnh");
+            return;
+        }
+        setAvatarLoading(true);
+        try {
+            const formData = new FormData();
+            formData.append("image", file);
+            const uploadRes = await axios.post("/api/upload/product", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+            const url = uploadRes?.data?.url || uploadRes?.url;
+            if (!url) throw new Error("Upload thất bại");
+
+            const res = await updateAvatarApi({ avatar: url });
+            if (res?.EC === 0) {
+                setAvatarUrl(url);
+                setAuth(prev => ({ ...prev, user: { ...prev.user, avatar: url } }));
+                message.success("Cập nhật ảnh đại diện thành công!");
+            } else {
+                message.error(res?.EM || "Cập nhật ảnh thất bại");
+            }
+        } catch (err) {
+            message.error("Lỗi tải ảnh: " + (err.message || "Thử lại sau"));
+        } finally {
+            setAvatarLoading(false);
+        }
+    };
+
+    const tabItems = [
+        {
+            key: "profile",
+            label: (
+                <span>
+                    <UserOutlined className="me-1" />
+                    Thông tin cá nhân
+                </span>
+            ),
+            children: (
+                <div className="p-3">
+                    <Form
+                        layout="vertical"
+                        initialValues={{ fullName: user.fullName || user.name || "", phone: user.phone || "" }}
+                        onFinish={handleUpdateProfile}
+                    >
+                        <Form.Item label="Email">
+                            <Input value={user.email} disabled style={{ borderRadius: 8 }} />
+                        </Form.Item>
+                        <Form.Item
+                            name="fullName"
+                            label="Họ và tên"
+                            rules={[{ required: true, message: "Vui lòng nhập tên" }]}
+                        >
+                            <Input placeholder="Nhập họ và tên" style={{ borderRadius: 8 }} />
+                        </Form.Item>
+                        <Form.Item name="phone" label="Số điện thoại">
+                            <Input placeholder="Nhập số điện thoại" style={{ borderRadius: 8 }} />
+                        </Form.Item>
+                        <Form.Item>
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                loading={profileLoading}
+                                style={{ borderRadius: 8, minWidth: 140 }}
+                            >
+                                Lưu thay đổi
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </div>
+            ),
+        },
+        {
+            key: "password",
+            label: (
+                <span>
+                    <LockOutlined className="me-1" />
+                    Đổi mật khẩu
+                </span>
+            ),
+            children: (
+                <div className="p-3">
+                    <Form layout="vertical" onFinish={handleChangePassword}>
+                        <Form.Item
+                            name="currentPassword"
+                            label="Mật khẩu hiện tại"
+                            rules={[{ required: true, message: "Vui lòng nhập mật khẩu hiện tại" }]}
+                        >
+                            <Input.Password placeholder="Mật khẩu hiện tại" style={{ borderRadius: 8 }} />
+                        </Form.Item>
+                        <Form.Item
+                            name="newPassword"
+                            label="Mật khẩu mới"
+                            rules={[
+                                { required: true, message: "Vui lòng nhập mật khẩu mới" },
+                                { min: 6, message: "Tối thiểu 6 ký tự" },
+                            ]}
+                        >
+                            <Input.Password placeholder="Mật khẩu mới" style={{ borderRadius: 8 }} />
+                        </Form.Item>
+                        <Form.Item
+                            name="confirmPassword"
+                            label="Xác nhận mật khẩu mới"
+                            dependencies={["newPassword"]}
+                            rules={[
+                                { required: true, message: "Vui lòng xác nhận mật khẩu" },
+                                ({ getFieldValue }) => ({
+                                    validator(_, value) {
+                                        if (!value || getFieldValue("newPassword") === value) {
+                                            return Promise.resolve();
+                                        }
+                                        return Promise.reject("Mật khẩu không khớp");
+                                    },
+                                }),
+                            ]}
+                        >
+                            <Input.Password placeholder="Nhập lại mật khẩu mới" style={{ borderRadius: 8 }} />
+                        </Form.Item>
+                        <Form.Item>
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                loading={pwdLoading}
+                                style={{ borderRadius: 8, minWidth: 140 }}
+                            >
+                                Đổi mật khẩu
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </div>
+            ),
+        },
+        {
+            key: "avatar",
+            label: (
+                <span>
+                    <CameraOutlined className="me-1" />
+                    Ảnh đại diện
+                </span>
+            ),
+            children: (
+                <div className="p-3 text-center">
+                    <Spin spinning={avatarLoading}>
+                        <div className="mb-4">
+                            <Avatar
+                                size={120}
+                                src={avatarUrl}
+                                icon={<UserOutlined />}
+                                style={{ border: "3px solid #f0e8df" }}
+                            />
+                        </div>
+                        <input
+                            ref={fileRef}
+                            type="file"
+                            accept="image/*"
+                            style={{ display: "none" }}
+                            onChange={handleAvatarChange}
+                        />
+                        <Button
+                            icon={<CameraOutlined />}
+                            onClick={() => fileRef.current?.click()}
+                            style={{ borderRadius: 8, minWidth: 180 }}
+                        >
+                            Chọn ảnh mới
+                        </Button>
+                        <p className="text-muted small mt-3">
+                            Hỗ trợ JPG, PNG. Dung lượng tối đa 5MB.
+                        </p>
+                    </Spin>
+                </div>
+            ),
+        },
     ];
 
     return (
-        <div className="user-page">
-            <h1>Danh sách người dùng</h1>
-            <Table
-                bordered
-                dataSource={dataSource}
-                columns={columns}
-                rowKey={"_id"}
-                pagination={{
-                    pageSize: 6,
-                    showSizeChanger: false,
-                }}
-            />
-        </div>
-    )
-}
+        <div style={{ background: "#F9F3EC", minHeight: "100vh" }} className="py-5">
+            <div className="container">
+                <div className="row justify-content-center">
+                    <div className="col-12 col-md-8 col-lg-6">
+                        <div className="bg-white rounded-4 shadow-sm overflow-hidden">
+                            {/* Header */}
+                            <div
+                                className="p-4 d-flex align-items-center gap-3"
+                                style={{ background: "#FFF8F0", borderBottom: "1px solid #f0e8df" }}
+                            >
+                                <Avatar
+                                    size={56}
+                                    src={avatarUrl}
+                                    icon={<UserOutlined />}
+                                    style={{ backgroundColor: "#ff6b35", flexShrink: 0 }}
+                                />
+                                <div>
+                                    <h5 className="mb-0 fw-normal" style={{ color: "#3a2e28" }}>
+                                        {user.fullName || user.name || "Tài khoản của tôi"}
+                                    </h5>
+                                    <p className="mb-0 text-muted small">{user.email}</p>
+                                </div>
+                            </div>
 
-export default UserPage;
+                            {/* Tabs */}
+                            <Tabs
+                                items={tabItems}
+                                defaultActiveKey="profile"
+                                style={{ padding: "0 8px" }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default AccountPage;

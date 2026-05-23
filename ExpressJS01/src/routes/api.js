@@ -33,4 +33,9 @@ routerAPI.get('/account', delay, userController.getAccount);
 routerAPI.get('/user/wishlist', userController.getWishlist);
 routerAPI.post('/user/wishlist/:productId', userController.toggleWishlist);
 
+// Account management routes
+routerAPI.put('/account/profile', userController.updateProfile);
+routerAPI.put('/account/password', userController.changePassword);
+routerAPI.put('/account/avatar', userController.updateAvatar);
+
 export default routerAPI;

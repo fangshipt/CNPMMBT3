@@ -9,7 +9,7 @@ function Footer() {
 
             <div className="col-md-3">
               <div className="footer-menu">
-                <img src={logo} alt="Waggy" className="footer-logo" />
+                <img src={logo} alt="FangShi Pet Shop" className="footer-logo" />
 
                 <p className="blog-paragraph fs-6 mt-3">
                   Đồ dùng và thức ăn thú cưng được chọn kỹ, dễ mua và giao tận nhà.

@@ -6,12 +6,28 @@ import { CartContext } from '../components/context/cartContext';
 import { AuthContext } from '../components/context/authContext';
 import { getAddressesApi, createOrderApi, formatPrice, getImageUrl } from '../util/api';
 
+const PAYMENT_METHODS = [
+    {
+        id: 'COD',
+        title: 'Thanh toán khi nhận hàng (COD)',
+        description: 'Bạn chỉ thanh toán khi đã nhận được hàng',
+        icon: 'ph:money',
+    },
+    {
+        id: 'VNPAY',
+        title: 'Thanh toán qua VNPay',
+        description: 'Thanh toán online an toàn và nhanh chóng',
+        icon: 'ph:credit-card',
+    },
+];
+
 function CheckoutPage() {
     const navigate = useNavigate();
     const { cart, cartTotal, fetchCart } = useContext(CartContext);
     const { auth } = useContext(AuthContext);
     const [addresses, setAddresses] = useState([]);
     const [selectedAddressId, setSelectedAddressId] = useState(null);
+    const [paymentMethod, setPaymentMethod] = useState('COD');
     const [loading, setLoading] = useState(true);
     const [placing, setPlacing] = useState(false);
 
@@ -52,12 +68,16 @@ function CheckoutPage() {
     const handlePlaceOrder = async () => {
         if (!selectedAddressId) { message.warning('Vui lòng chọn địa chỉ giao hàng'); return; }
         setPlacing(true);
-        const res = await createOrderApi({ addressId: selectedAddressId, shippingFee });
+        const res = await createOrderApi({ addressId: selectedAddressId, shippingFee, paymentMethod });
         setPlacing(false);
         if (res?.EC === 0) {
             await fetchCart();
-            message.success('Đặt hàng thành công!');
-            navigate(`/orders/${res.data._id}`);
+            if (paymentMethod === 'VNPAY' && res.data?.paymentUrl) {
+                window.location.href = res.data.paymentUrl;
+            } else {
+                message.success('Đặt hàng thành công!');
+                navigate(`/orders/${res.data?.order?._id || res.data?._id}`);
+            }
         } else {
             message.error(res?.EM || 'Đặt hàng thất bại');
         }
@@ -111,7 +131,6 @@ function CheckoutPage() {
                                                     gap: 12,
                                                 }}
                                             >
-                                                {/* Radio indicator */}
                                                 <div style={{
                                                     width: 20, height: 20, borderRadius: '50%', flexShrink: 0, marginTop: 2,
                                                     border: isSelected ? '2px solid #ff6b35' : '2px solid #ccc',
@@ -120,31 +139,17 @@ function CheckoutPage() {
                                                 }}>
                                                     {isSelected && <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#fff' }} />}
                                                 </div>
-
-                                                {/* Address content */}
                                                 <div style={{ flex: 1, minWidth: 0 }}>
                                                     <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 6, marginBottom: 4 }}>
-                                                        {addr.recipientName && (
-                                                            <span style={{ fontWeight: 600, color: '#3a2e28', fontSize: '0.95rem' }}>{addr.recipientName}</span>
-                                                        )}
-                                                        {addr.phone && (
-                                                            <span style={{ color: '#5a4a3f', fontSize: '0.9rem' }}>•</span>
-                                                        )}
-                                                        {addr.phone && (
-                                                            <span style={{ color: '#5a4a3f', fontSize: '0.9rem' }}>{addr.phone}</span>
-                                                        )}
-                                                        {addr.isDefault && (
-                                                            <Tag color="orange" style={{ fontSize: '0.72rem', margin: 0 }}>Mặc định</Tag>
-                                                        )}
+                                                        {addr.recipientName && <span style={{ fontWeight: 600, color: '#3a2e28', fontSize: '0.95rem' }}>{addr.recipientName}</span>}
+                                                        {addr.phone && <><span style={{ color: '#5a4a3f' }}>•</span><span style={{ color: '#5a4a3f', fontSize: '0.9rem' }}>{addr.phone}</span></>}
+                                                        {addr.isDefault && <Tag color="orange" style={{ fontSize: '0.72rem', margin: 0 }}>Mặc định</Tag>}
                                                     </div>
                                                     {fullAddress && (
                                                         <div style={{ color: '#6b7280', fontSize: '0.85rem', lineHeight: 1.5 }}>
                                                             <iconify-icon icon="ph:map-pin" style={{ fontSize: '0.85rem', marginRight: 4, verticalAlign: 'middle', color: '#ff6b35' }}></iconify-icon>
                                                             {fullAddress}
                                                         </div>
-                                                    )}
-                                                    {!addr.recipientName && !addr.phone && !fullAddress && (
-                                                        <span style={{ color: '#aaa', fontSize: '0.85rem' }}>Địa chỉ #{addr._id?.slice(-6)}</span>
                                                     )}
                                                 </div>
                                             </div>
@@ -160,12 +165,32 @@ function CheckoutPage() {
                                 <iconify-icon icon="ph:wallet" class="me-2"></iconify-icon>
                                 Phương thức thanh toán
                             </h5>
-                            <div className="p-3 rounded-3 d-flex align-items-center gap-3" style={{ border: '2px solid #ff6b35', background: '#FFF8F0' }}>
-                                <CheckCircleFilled style={{ color: '#ff6b35', fontSize: '1.2rem' }} />
-                                <div>
-                                    <div className="fw-semibold">Thanh toán khi nhận hàng (COD)</div>
-                                    <div className="text-muted small">Bạn chỉ thanh toán khi đã nhận được hàng</div>
-                                </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                                {PAYMENT_METHODS.map(pm => {
+                                    const isSelected = paymentMethod === pm.id;
+                                    return (
+                                        <div
+                                            key={pm.id}
+                                            onClick={() => setPaymentMethod(pm.id)}
+                                            className="p-3 rounded-3 d-flex align-items-center gap-3"
+                                            style={{
+                                                border: isSelected ? '2px solid #ff6b35' : '1.5px solid #e0d5ca',
+                                                background: isSelected ? '#FFF8F0' : '#fff',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.2s',
+                                            }}
+                                        >
+                                            {isSelected
+                                                ? <CheckCircleFilled style={{ color: '#ff6b35', fontSize: '1.2rem', flexShrink: 0 }} />
+                                                : <div style={{ width: 20, height: 20, borderRadius: '50%', border: '2px solid #ccc', flexShrink: 0 }} />
+                                            }
+                                            <div>
+                                                <div className="fw-semibold" style={{ fontSize: '0.95rem' }}>{pm.title}</div>
+                                                <div className="text-muted small">{pm.description}</div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
@@ -205,8 +230,8 @@ function CheckoutPage() {
                                 <strong className="text-primary fs-5">{formatPrice(orderTotal)}</strong>
                             </div>
                             <Button type="primary" block size="large" onClick={handlePlaceOrder} loading={placing} disabled={!selectedAddressId}>
-                                <iconify-icon icon="ph:check-circle" class="me-2"></iconify-icon>
-                                Đặt hàng
+                                <iconify-icon icon={paymentMethod === 'VNPAY' ? 'ph:credit-card' : 'ph:check-circle'} class="me-2"></iconify-icon>
+                                {paymentMethod === 'VNPAY' ? 'Thanh toán qua PayOS' : 'Đặt hàng'}
                             </Button>
                             <Link to="/cart"><Button block className="mt-2">Quay lại giỏ hàng</Button></Link>
                         </div>

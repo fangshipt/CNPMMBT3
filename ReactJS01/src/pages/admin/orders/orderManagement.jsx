@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Table, Tag, Select, Button, Modal, Input, message, Space, Pagination } from 'antd';
-import { getAdminOrdersApi, updateOrderStatusApi, formatPrice } from '../../../util/api';
+import { useState, useEffect, useCallback } from 'react';
+import { Table, Tag, Select, Button, Modal, Input, message, Space, Pagination, Statistic, Image } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import { getAdminOrdersApi, updateOrderStatusApi, formatPrice, getImageUrl } from '../../../util/api';
 
 const STATUS_CONFIG = {
     pending:          { label: 'Đơn hàng mới',              color: 'blue' },
@@ -20,10 +21,13 @@ const NEXT_STATUS = {
     cancel_requested: [{ value: 'cancelled', label: 'Duyệt hủy' }, { value: 'preparing', label: 'Từ chối hủy - Tiếp tục' }],
 };
 
+const MONTH_NAMES = ['T1','T2','T3','T4','T5','T6','T7','T8','T9','T10','T11','T12'];
+
 function OrderManagement() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [statusFilter, setStatusFilter] = useState(undefined);
+    const [orderCodeSearch, setOrderCodeSearch] = useState('');
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
     const [updateModal, setUpdateModal] = useState(false);
@@ -33,14 +37,14 @@ function OrderManagement() {
     const [updating, setUpdating] = useState(false);
     const [detailModal, setDetailModal] = useState(false);
 
-    const loadOrders = async () => {
+    const loadOrders = useCallback(async () => {
         setLoading(true);
-        const res = await getAdminOrdersApi({ page, limit: 20, status: statusFilter });
+        const res = await getAdminOrdersApi({ page, limit: 20, status: statusFilter, orderCode: orderCodeSearch || undefined });
         if (res?.EC === 0) { setOrders(res.data.orders); setTotal(res.data.total); }
         setLoading(false);
-    };
+    }, [page, statusFilter, orderCodeSearch]);
 
-    useEffect(() => { loadOrders(); }, [page, statusFilter]);
+    useEffect(() => { loadOrders(); }, [loadOrders]);
 
     const openUpdateModal = (order, status) => {
         setSelectedOrder(order);
@@ -67,9 +71,9 @@ function OrderManagement() {
     const columns = [
         {
             title: 'Mã đơn',
-            dataIndex: '_id',
-            render: (id) => <code style={{ fontSize: '0.8rem' }}>#{id.slice(-8).toUpperCase()}</code>,
-            width: 110,
+            dataIndex: 'orderCode',
+            render: (code, record) => <code style={{ fontSize: '0.8rem' }}>{code || '#' + record._id.slice(-8).toUpperCase()}</code>,
+            width: 150,
         },
         {
             title: 'Khách hàng',
@@ -127,15 +131,25 @@ function OrderManagement() {
         <div>
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h4 style={{ color: '#3a2e28', fontWeight: 600 }}>Quản lý đơn hàng</h4>
-                <Select
-                    allowClear placeholder="Lọc trạng thái" style={{ width: 200 }}
-                    value={statusFilter}
-                    onChange={v => { setStatusFilter(v); setPage(1); }}
-                >
-                    {Object.entries(STATUS_CONFIG).map(([key, { label, color }]) => (
-                        <Select.Option key={key} value={key}><Tag color={color} style={{ margin: 0 }}>{label}</Tag></Select.Option>
-                    ))}
-                </Select>
+                <Space wrap>
+                    <Input
+                        placeholder="Tìm theo mã đơn..."
+                        prefix={<SearchOutlined />}
+                        style={{ width: 200 }}
+                        value={orderCodeSearch}
+                        onChange={e => { setOrderCodeSearch(e.target.value); setPage(1); }}
+                        allowClear
+                    />
+                    <Select
+                        allowClear placeholder="Lọc trạng thái" style={{ width: 180 }}
+                        value={statusFilter}
+                        onChange={v => { setStatusFilter(v); setPage(1); }}
+                    >
+                        {Object.entries(STATUS_CONFIG).map(([key, { label, color }]) => (
+                            <Select.Option key={key} value={key}><Tag color={color} style={{ margin: 0 }}>{label}</Tag></Select.Option>
+                        ))}
+                    </Select>
+                </Space>
             </div>
 
             <div style={{ background: '#fff', borderRadius: 12, padding: 16 }}>
@@ -155,7 +169,7 @@ function OrderManagement() {
 
             {/* Modal cập nhật trạng thái */}
             <Modal
-                title={`Cập nhật đơn #${selectedOrder?._id?.slice(-8).toUpperCase()}`}
+                title={`Cập nhật đơn #${selectedOrder?.orderCode || '#' + selectedOrder?._id?.slice(-8).toUpperCase()}`}
                 open={updateModal}
                 onOk={handleUpdate}
                 onCancel={() => setUpdateModal(false)}
@@ -174,45 +188,89 @@ function OrderManagement() {
 
             {/* Modal chi tiết đơn hàng */}
             <Modal
-                title={`Chi tiết đơn #${selectedOrder?._id?.slice(-8).toUpperCase()}`}
+                title={`Chi tiết đơn ${selectedOrder?.orderCode || '#' + selectedOrder?._id?.slice(-8).toUpperCase()}`}
                 open={detailModal}
                 onCancel={() => setDetailModal(false)}
                 footer={null}
-                width={600}
+                width={640}
             >
                 {selectedOrder && (
                     <div>
-                        <div className="mb-3">
-                            <strong>Trạng thái: </strong>
-                            <Tag color={STATUS_CONFIG[selectedOrder.status]?.color}>{STATUS_CONFIG[selectedOrder.status]?.label}</Tag>
+                        {/* Status + Time */}
+                        <div className="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <strong>Trạng thái: </strong>
+                                <Tag color={STATUS_CONFIG[selectedOrder.status]?.color}>{STATUS_CONFIG[selectedOrder.status]?.label}</Tag>
+                            </div>
+                            <span className="text-muted" style={{ fontSize: '0.83rem' }}>
+                                Đặt lúc: {formatDate(selectedOrder.createdAt)}
+                            </span>
                         </div>
-                        <div className="mb-3">
+
+                        {/* Customer */}
+                        <div className="mb-3 p-3 rounded" style={{ background: '#f9f3ec' }}>
                             <strong>Khách hàng: </strong>{selectedOrder.user?.fullName || selectedOrder.user?.email}
                         </div>
+
+                        {/* Shipping address */}
                         <div className="mb-3">
                             <strong>Địa chỉ giao hàng:</strong>
-                            <div className="text-muted mt-1">
+                            <div className="text-muted mt-1" style={{ fontSize: '0.88rem' }}>
                                 {selectedOrder.shippingAddress?.recipientName} • {selectedOrder.shippingAddress?.phone}<br />
                                 {selectedOrder.shippingAddress?.detail}, {selectedOrder.shippingAddress?.ward},<br />
                                 {selectedOrder.shippingAddress?.district}, {selectedOrder.shippingAddress?.province}
                             </div>
                         </div>
+
+                        {/* Products with images */}
                         <div className="mb-3">
                             <strong>Sản phẩm:</strong>
                             {selectedOrder.items?.map((item, idx) => (
-                                <div key={idx} className="d-flex justify-content-between mt-1 text-muted" style={{ fontSize: '0.9rem' }}>
-                                    <span>{item.name} x{item.quantity}</span>
-                                    <span>{formatPrice(item.price * item.quantity)}</span>
+                                <div key={idx} className="d-flex align-items-center gap-3 mt-2 p-2 rounded" style={{ border: '1px solid #f0e8df' }}>
+                                    <Image
+                                        src={getImageUrl(item.image)}
+                                        width={52}
+                                        height={52}
+                                        style={{ objectFit: 'cover', borderRadius: 8, flexShrink: 0 }}
+                                        fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
+                                    />
+                                    <div className="flex-grow-1">
+                                        <div style={{ fontWeight: 500, fontSize: '0.9rem' }}>{item.name}</div>
+                                        <div className="text-muted" style={{ fontSize: '0.82rem' }}>
+                                            {formatPrice(item.price)} × {item.quantity}
+                                        </div>
+                                    </div>
+                                    <div style={{ fontWeight: 600, color: '#ff6b35', whiteSpace: 'nowrap' }}>
+                                        {formatPrice(item.price * item.quantity)}
+                                    </div>
                                 </div>
                             ))}
                         </div>
-                        <div className="d-flex justify-content-between fw-bold">
-                            <span>Tổng cộng</span>
-                            <span style={{ color: '#ff6b35' }}>{formatPrice(selectedOrder.totalAmount)}</span>
+
+                        {/* Price breakdown */}
+                        <div className="p-3 rounded" style={{ background: '#f9f3ec', borderTop: '1px solid #e8ddd5' }}>
+                            <div className="d-flex justify-content-between mb-1 text-muted" style={{ fontSize: '0.88rem' }}>
+                                <span>Tạm tính</span>
+                                <span>{formatPrice((selectedOrder.totalAmount || 0) - (selectedOrder.shippingFee || 0))}</span>
+                            </div>
+                            <div className="d-flex justify-content-between mb-2 text-muted" style={{ fontSize: '0.88rem' }}>
+                                <span>Phí vận chuyển</span>
+                                <span>{selectedOrder.shippingFee > 0 ? formatPrice(selectedOrder.shippingFee) : <span style={{ color: '#52c41a' }}>Miễn phí</span>}</span>
+                            </div>
+                            <div className="d-flex justify-content-between fw-bold">
+                                <span>Tổng cộng</span>
+                                <span style={{ color: '#ff6b35', fontSize: '1.05rem' }}>{formatPrice(selectedOrder.totalAmount)}</span>
+                            </div>
                         </div>
+
                         {selectedOrder.cancelReason && (
                             <div className="mt-3 p-3 rounded" style={{ background: '#fff5f5' }}>
                                 <strong className="text-danger">Lý do hủy:</strong> {selectedOrder.cancelReason}
+                            </div>
+                        )}
+                        {selectedOrder.notes && (
+                            <div className="mt-3 p-3 rounded" style={{ background: '#f0f8ff' }}>
+                                <strong>Ghi chú:</strong> {selectedOrder.notes}
                             </div>
                         )}
                     </div>

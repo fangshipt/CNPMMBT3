@@ -74,9 +74,11 @@ function BlogDetailPage() {
           )}
 
           {post.content && (
-            <div style={{ lineHeight: 1.85, color: '#3a2e28', whiteSpace: 'pre-wrap' }}>
-              {post.content}
-            </div>
+            <div
+              className="blog-content"
+              style={{ lineHeight: 1.85, color: '#3a2e28' }}
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
           )}
         </article>
 

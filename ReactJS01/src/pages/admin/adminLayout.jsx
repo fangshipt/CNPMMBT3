@@ -11,6 +11,8 @@ const NAV_ITEMS = [
   { to: "/admin/orders", label: "Đơn hàng", icon: "ph:receipt" },
   { to: "/admin/promotions", label: "Khuyến mãi", icon: "ph:percent" },
   { to: "/admin/blogs", label: "Bài viết", icon: "ph:newspaper" },
+  { to: "/admin/revenue", label: "Doanh thu", icon: "ph:chart-bar" },
+  { to: "/admin/chat", label: "Chat", icon: "ph:chat-circle-dots" },
 ];
 
 function AdminLayout() {
@@ -56,7 +58,7 @@ function AdminLayout() {
           <div style={{ padding: "24px 20px 20px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
             <Link to="/" style={{ color: "#fff", textDecoration: "none" }}>
               <div style={{ fontSize: "1.15rem", fontWeight: 700, letterSpacing: 0.5, color: "#DEAD6F" }}>
-                🐾 PetStore Admin
+                🐾 FangShi Pet Shop
               </div>
             </Link>
             <div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.55)", marginTop: 6 }}>
