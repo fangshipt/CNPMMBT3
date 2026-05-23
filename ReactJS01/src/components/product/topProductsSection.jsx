@@ -44,7 +44,7 @@ function MiniProductCard({ product }) {
       )}
       {product.isNewProduct && (
         <div style={{ position: "absolute", top: 8, left: 8, zIndex: 2 }}>
-          <span className="badge bg-success" style={{ fontSize: "0.68rem" }}>Mới</span>
+          <span className="badge" style={{ background: "#10b981", fontSize: "0.68rem" }}>Mới</span>
         </div>
       )}
 

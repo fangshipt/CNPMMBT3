@@ -28,6 +28,10 @@ function ProductDetailPage() {
   const apiCallRef = useRef(null);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [id]);
+
+  useEffect(() => {
     // Lưu id vào ref: nếu cùng id (kể cả StrictMode re-run), bỏ qua
     if (apiCallRef.current === id) return;
     apiCallRef.current = id;
@@ -100,8 +104,6 @@ function ProductDetailPage() {
     if (res?.EC === 0) navigate('/checkout');
     else message.error(res?.EM || 'Không thể thêm vào giỏ hàng');
   };
-
-  const PET_LABELS = { dog: "Chó", cat: "Mèo", bird: "Chim", fish: "Cá" };
 
   return (
     <div style={{ background: "#F9F3EC", minHeight: "100vh" }}>
@@ -214,11 +216,6 @@ function ProductDetailPage() {
                   </div>
                 ) : (
                   <span className="badge bg-danger fs-6">Hết hàng</span>
-                )}
-                {product.petType && product.petType !== "all" && (
-                  <span className="badge" style={{ background: "#f0e8df", color: "#a0856e" }}>
-                    Phù hợp: {PET_LABELS[product.petType] || product.petType}
-                  </span>
                 )}
               </div>
 

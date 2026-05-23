@@ -9,6 +9,10 @@ function BlogDetailPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [slug]);
+
+  useEffect(() => {
     setLoading(true);
     getBlogBySlugApi(slug).then((res) => {
       if (res?.EC === 0) setPost(res.data);
