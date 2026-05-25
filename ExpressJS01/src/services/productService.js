@@ -104,7 +104,7 @@ export const createProductService = async (body) => {
 
 export const getProductsService = async (query) => {
   try {
-    const { page = 1, limit = 10, search = "", category, isFeatured, isBestSeller, isNewProduct, isOnSale, sortBy = "-createdAt" } = query;
+    const { page = 1, limit = 10, search = "", category, isFeatured, isBestSeller, isNewProduct, isOnSale, isFreeship, sortBy = "-createdAt" } = query;
 
     const pageNum = Math.max(1, parseInt(page) || 1);
     const limitNum = Math.max(1, Math.min(100, parseInt(limit) || 10));
@@ -143,6 +143,25 @@ export const getProductsService = async (query) => {
 
     if (isOnSale === "true" || isOnSale === true) {
       filter.discountPrice = { $gt: 0 };
+    }
+
+    if (isFreeship === "true" || isFreeship === true) {
+      const { default: Promotion } = await import("../models/promotion.js");
+      const now = new Date();
+      const promo = await Promotion.findOne({
+        type: "freeship",
+        isActive: true,
+        $or: [{ startDate: { $exists: false } }, { startDate: null }, { startDate: { $lte: now } }],
+      }).and([
+        { $or: [{ endDate: { $exists: false } }, { endDate: null }, { endDate: { $gte: now } }] },
+      ]);
+      if (promo && promo.products.length > 0) {
+        filter._id = { $in: promo.products };
+      } else if (!promo) {
+        // Không có freeship active → trả về rỗng
+        filter._id = { $in: [] };
+      }
+      // Nếu promo tồn tại nhưng products rỗng → áp dụng cho tất cả (không thêm filter _id)
     }
 
     const minPrice = parseFloat(query.minPrice);
@@ -203,7 +222,9 @@ export const getProductByIdOrSlugService = async (idOrSlug) => {
       filter,
       { $inc: { views: 1 } },
       { new: true }
-    ).populate("category", "name slug");
+    )
+      .populate("category", "name slug")
+      .populate("reviews.user", "fullName avatar");
 
     if (!product) {
       return { EC: 1, EM: "Sản phẩm không tồn tại" };

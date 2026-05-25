@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { getProductsApi, getCategoriesApi } from "../util/api";
+import { getProductsApi, getCategoriesApi, getActiveFreeshipApi } from "../util/api";
 import ProductCard from "../components/card/productCard";
 import Loading from "../components/common/loading";
 import TopProductsSection from "../components/product/topProductsSection";
@@ -39,6 +39,9 @@ function ProductsPage() {
   const [isOnSale, setIsOnSale] = useState(searchParams.get("isOnSale") === "true");
 
   const [categories, setCategories] = useState([]);
+  const [hasActiveFreeship, setHasActiveFreeship] = useState(false);
+  const [freeshipProductIds, setFreeshipProductIds] = useState(new Set());
+  const [isFreeship, setIsFreeship] = useState(searchParams.get("isFreeship") === "true");
 
   // Lazy loading state
   const [products, setProducts] = useState([]);
@@ -52,12 +55,18 @@ function ProductsPage() {
   const isFetchingRef = useRef(false);
 
   // Build filter key to detect when filters change
-  const filterKey = [search, selectedCategory, minPrice, maxPrice, sortBy, isBestSeller, isNewProduct, isOnSale].join("|");
+  const filterKey = [search, selectedCategory, minPrice, maxPrice, sortBy, isBestSeller, isNewProduct, isOnSale, isFreeship].join("|");
 
-  // Fetch categories once
+  // Fetch categories + freeship status once
   useEffect(() => {
     getCategoriesApi({ limit: 50 }).then((res) => {
       if (res.EC === 0) setCategories(res.data);
+    });
+    getActiveFreeshipApi().then((res) => {
+      if (res?.EC === 0) {
+        setHasActiveFreeship(res.data.hasFreeship);
+        setFreeshipProductIds(new Set(res.data.productIds || []));
+      }
     });
   }, []);
 
@@ -78,6 +87,7 @@ function ProductsPage() {
       if (isBestSeller) params.isBestSeller = true;
       if (isNewProduct) params.isNewProduct = true;
       if (isOnSale) params.isOnSale = true;
+      if (isFreeship) params.isFreeship = true;
 
       const res = await getProductsApi(params);
       isFetchingRef.current = false;
@@ -114,6 +124,7 @@ function ProductsPage() {
     if (isBestSeller) params.isBestSeller = true;
     if (isNewProduct) params.isNewProduct = true;
     if (isOnSale) params.isOnSale = true;
+    if (isFreeship) params.isFreeship = true;
     setSearchParams(params);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterKey]);
@@ -152,14 +163,15 @@ function ProductsPage() {
   const changeNewProduct = (val) => setIsNewProduct(val);
 
   const changeIsOnSale = (val) => setIsOnSale(val);
+  const changeIsFreeship = (val) => setIsFreeship(val);
 
   const resetFilters = () => {
     setSearch(""); setSearchInput(""); setSelectedCategory("");
     setMinPrice(""); setMaxPrice("");
-    setSortBy("-createdAt"); setIsBestSeller(false); setIsNewProduct(false); setIsOnSale(false);
+    setSortBy("-createdAt"); setIsBestSeller(false); setIsNewProduct(false); setIsOnSale(false); setIsFreeship(false);
   };
 
-  const hasActiveFilters = search || selectedCategory || minPrice || maxPrice || isBestSeller || isNewProduct || isOnSale;
+  const hasActiveFilters = search || selectedCategory || minPrice || maxPrice || isBestSeller || isNewProduct || isOnSale || isFreeship;
   const activeCategory = categories.find((c) => c._id === selectedCategory);
 
   const chipStyle = { background: "#e8ddd5", color: "#5a4a3f", padding: "5px 12px", fontSize: "0.8rem" };
@@ -238,6 +250,11 @@ function ProductsPage() {
                   🏷️ Khuyến mãi<button style={{ ...chipBtnStyle, color: "#fff" }} onClick={() => changeIsOnSale(false)}>×</button>
                 </span>
               )}
+              {isFreeship && (
+                <span className="badge rounded-pill d-flex align-items-center" style={{ ...chipStyle, background: "#0891b2", color: "#fff" }}>
+                  🚚 Freeship<button style={{ ...chipBtnStyle, color: "#fff" }} onClick={() => changeIsFreeship(false)}>×</button>
+                </span>
+              )}
             </div>
           )}
         </div>
@@ -286,11 +303,18 @@ function ProductsPage() {
                   onChange={(e) => changeNewProduct(e.target.checked)} />
                 <span>✨ Hàng mới về</span>
               </label>
-              <label className="d-flex align-items-center gap-2" style={{ cursor: "pointer" }}>
+              <label className="d-flex align-items-center gap-2 mb-2" style={{ cursor: "pointer" }}>
                 <input type="checkbox" checked={isOnSale}
                   onChange={(e) => changeIsOnSale(e.target.checked)} />
                 <span>🏷️ Đang khuyến mãi</span>
               </label>
+              {hasActiveFreeship && (
+                <label className="d-flex align-items-center gap-2" style={{ cursor: "pointer" }}>
+                  <input type="checkbox" checked={isFreeship}
+                    onChange={(e) => changeIsFreeship(e.target.checked)} />
+                  <span style={{ color: "#0891b2", fontWeight: 500 }}>🚚 Freeship toàn quốc</span>
+                </label>
+              )}
             </FilterCard>
           </div>
 
@@ -322,7 +346,15 @@ function ProductsPage() {
                 <div className="row g-3">
                   {products.map((product) => (
                     <div key={product._id} className="col-sm-6 col-lg-3">
-                      <ProductCard product={product} />
+                      <ProductCard
+                        product={product}
+                        showFreeship={
+                          hasActiveFreeship && (
+                            freeshipProductIds.size === 0 ||
+                            freeshipProductIds.has(product._id)
+                          )
+                        }
+                      />
                     </div>
                   ))}
                 </div>

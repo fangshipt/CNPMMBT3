@@ -103,6 +103,7 @@ const getPromotionsApi = (params = {}) => axios.get('/v1/api/promotions', { para
 const createPromotionApi = (data) => axios.post('/v1/api/promotions', data);
 const updatePromotionApi = (id, data) => axios.put(`/v1/api/promotions/${id}`, data);
 const deletePromotionApi = (id) => axios.delete(`/v1/api/promotions/${id}`);
+const getActiveFreeshipApi = () => axios.get('/v1/api/promotions/active-freeship');
 
 // Testimonial APIs
 const getPublicTestimonialsApi = (limit = 10) => axios.get('/v1/api/testimonials/public', { params: { limit } });
@@ -143,7 +144,7 @@ export {
     getAdminOrdersApi, updateOrderStatusApi,
     canReviewApi, addReviewApi,
     getWishlistApi, toggleWishlistApi,
-    getPromotionsApi, createPromotionApi, updatePromotionApi, deletePromotionApi,
+    getPromotionsApi, createPromotionApi, updatePromotionApi, deletePromotionApi, getActiveFreeshipApi,
     getPublishedBlogsApi, getBlogBySlugApi, getAdminBlogsApi, createBlogApi, updateBlogApi, deleteBlogApi,
     getPublicTestimonialsApi, getTestimonialStatusApi, createTestimonialApi,
     getAdminTestimonialsApi, updateTestimonialApprovalApi, deleteTestimonialApi,

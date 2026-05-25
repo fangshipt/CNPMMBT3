@@ -5,7 +5,7 @@ import { WishlistContext } from "../context/wishlistContext";
 import { AuthContext } from "../context/authContext";
 import { CartContext } from "../context/cartContext";
 
-function ProductCard({ product }) {
+function ProductCard({ product, showFreeship = false }) {
   if (!product) return null;
   const navigate = useNavigate();
   const { auth } = useContext(AuthContext);
@@ -75,6 +75,9 @@ function ProductCard({ product }) {
         )}
         {outOfStock && (
           <span className="badge" style={{ background: "#64748b", fontSize: "0.72rem" }}>Hết hàng</span>
+        )}
+        {showFreeship && (
+          <span className="badge" style={{ background: "#0891b2", fontSize: "0.72rem" }}>🚚 Freeship</span>
         )}
       </div>
 

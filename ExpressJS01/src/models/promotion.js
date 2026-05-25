@@ -4,8 +4,8 @@ const promotionSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
     description: { type: String, default: "", trim: true },
-    type: { type: String, enum: ["percent", "fixed"], required: true },
-    value: { type: Number, required: true, min: 0 },
+    type: { type: String, enum: ["percent", "fixed", "freeship"], required: true },
+    value: { type: Number, default: 0, min: 0 },
     products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
     startDate: { type: Date },
     endDate: { type: Date },

@@ -15,6 +15,7 @@ function PromotionManagement() {
     const [editing, setEditing] = useState(null);
     const [saving, setSaving] = useState(false);
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+    const [promoType, setPromoType] = useState('percent');
     const [form] = Form.useForm();
 
     const loadData = async () => {
@@ -35,6 +36,7 @@ function PromotionManagement() {
     const openAdd = () => {
         setEditing(null);
         setSelectedCategoryId(null);
+        setPromoType('percent');
         form.resetFields();
         form.setFieldsValue({ isActive: true, type: 'percent' });
         setModalOpen(true);
@@ -43,6 +45,7 @@ function PromotionManagement() {
     const openEdit = (promo) => {
         setEditing(promo);
         setSelectedCategoryId(null);
+        setPromoType(promo.type || 'percent');
         form.setFieldsValue({
             name: promo.name,
             description: promo.description,
@@ -108,12 +111,12 @@ function PromotionManagement() {
         },
         {
             title: 'Loại / Giá trị',
-            render: (_, r) => (
-                <Tag color={r.type === 'percent' ? 'blue' : 'green'}>
-                    {r.type === 'percent' ? `-${r.value}%` : `-${formatPrice(r.value)}`}
-                </Tag>
-            ),
-            width: 130,
+            render: (_, r) => {
+                if (r.type === 'freeship') return <Tag color="cyan">Miễn phí vận chuyển</Tag>;
+                if (r.type === 'percent') return <Tag color="blue">-{r.value}%</Tag>;
+                return <Tag color="green">-{formatPrice(r.value)}</Tag>;
+            },
+            width: 160,
         },
         {
             title: 'Sản phẩm áp dụng',
@@ -192,23 +195,33 @@ function PromotionManagement() {
                     </Form.Item>
 
                     <div className="row g-0">
-                        <div className="col-md-5 pe-md-2">
-                            <Form.Item name="type" label="Loại giảm giá" rules={[{ required: true }]}>
-                                <Select>
+                        <div className={promoType === 'freeship' ? 'col-12' : 'col-md-5 pe-md-2'}>
+                            <Form.Item name="type" label="Loại khuyến mãi" rules={[{ required: true }]}>
+                                <Select onChange={(v) => setPromoType(v)}>
                                     <Select.Option value="percent">Giảm theo % (phần trăm)</Select.Option>
                                     <Select.Option value="fixed">Giảm tiền cố định (đồng)</Select.Option>
+                                    <Select.Option value="freeship">Miễn phí vận chuyển</Select.Option>
                                 </Select>
                             </Form.Item>
                         </div>
-                        <div className="col-md-7 ps-md-2">
-                            <Form.Item name="value" label="Giá trị giảm" rules={[{ required: true, message: 'Nhập giá trị giảm' }]}>
-                                <InputNumber
-                                    min={0} style={{ width: '100%' }}
-                                    placeholder="VD: 20 (%) hoặc 50000 (đồng)"
-                                />
-                            </Form.Item>
-                        </div>
+                        {promoType !== 'freeship' && (
+                            <div className="col-md-7 ps-md-2">
+                                <Form.Item name="value" label="Giá trị giảm" rules={[{ required: true, message: 'Nhập giá trị giảm' }]}>
+                                    <InputNumber
+                                        min={0} style={{ width: '100%' }}
+                                        placeholder="VD: 20 (%) hoặc 50000 (đồng)"
+                                    />
+                                </Form.Item>
+                            </div>
+                        )}
                     </div>
+                    {promoType === 'freeship' && (
+                        <div className="mb-3 p-3 rounded-3" style={{ background: '#e6f7ff', border: '1px solid #91d5ff' }}>
+                            <span style={{ color: '#0958d9', fontSize: '0.875rem' }}>
+                                🚚 Khách hàng sẽ được miễn phí vận chuyển hoàn toàn, bất kể địa chỉ nội thành hay ngoại thành.
+                            </span>
+                        </div>
+                    )}
 
                     {/* Category quick-select */}
                     <Form.Item label="Chọn theo danh mục (thêm nhanh vào danh sách sản phẩm)">

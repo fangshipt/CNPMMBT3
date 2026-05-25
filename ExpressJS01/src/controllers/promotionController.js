@@ -3,6 +3,7 @@ import {
   createPromotionService,
   updatePromotionService,
   deletePromotionService,
+  getActiveFreeshipService,
 } from "../services/promotionService.js";
 
 export const getPromotions = async (req, res) => {
@@ -23,4 +24,9 @@ export const updatePromotion = async (req, res) => {
 export const deletePromotion = async (req, res) => {
   const data = await deletePromotionService(req.params.id);
   return res.status(data.EC === 0 ? 200 : 400).json(data);
+};
+
+export const getActiveFreeship = async (req, res) => {
+  const data = await getActiveFreeshipService();
+  return res.json(data);
 };

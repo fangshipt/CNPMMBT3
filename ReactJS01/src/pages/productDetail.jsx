@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { message, Rate } from "antd";
-import { getProductByIdOrSlugApi, formatPrice, canReviewApi, addReviewApi } from "../util/api";
+import { getProductByIdOrSlugApi, formatPrice, canReviewApi, addReviewApi, getActiveFreeshipApi } from "../util/api";
 import ProductSwiper from "../components/product/productSwiper";
 import RelatedProducts from "../components/product/relatedProducts";
 import QuantityButton from "../components/common/quantityButton";
@@ -22,6 +22,8 @@ function ProductDetailPage() {
   const [addedToCart, setAddedToCart] = useState(false);
   const [addingToCart, setAddingToCart] = useState(false);
   const [canReview, setCanReview] = useState(false);
+  const [hasFreeship, setHasFreeship] = useState(false);
+  const [freeshipProductIds, setFreeshipProductIds] = useState(new Set());
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState("");
   const [submittingReview, setSubmittingReview] = useState(false);
@@ -48,6 +50,15 @@ function ProductDetailPage() {
       setLoading(false);
     });
   }, [id]);
+
+  useEffect(() => {
+    getActiveFreeshipApi().then((res) => {
+      if (res?.EC === 0) {
+        setHasFreeship(res.data.hasFreeship);
+        setFreeshipProductIds(new Set(res.data.productIds || []));
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (auth.isAuthenticated && product) {
@@ -159,6 +170,11 @@ function ProductDetailPage() {
                     -{Math.round((1 - product.discountPrice / product.price) * 100)}% SALE
                   </span>
                 )}
+                {hasFreeship && (freeshipProductIds.size === 0 || freeshipProductIds.has(product._id)) && (
+                  <span className="badge" style={{ background: "#0891b2", fontSize: "0.8rem" }}>
+                    🚚 Freeship
+                  </span>
+                )}
               </div>
 
               {/* Name */}
@@ -211,11 +227,19 @@ function ProductDetailPage() {
               <div className="d-flex flex-wrap gap-3 align-items-center mb-4">
                 {inStock ? (
                   <div className="d-flex align-items-center gap-2">
-                    <span className="badge bg-success">Còn hàng</span>
-                    <span className="text-muted small">({product.stock} có sẵn)</span>
+                    <span className="badge fs-6 px-3 py-2" style={{ background: "#16a34a", letterSpacing: "0.02em" }}>
+                      <iconify-icon icon="ph:check-circle" class="me-1"></iconify-icon>
+                      Còn hàng
+                    </span>
+                    <span className="fw-semibold" style={{ color: "#15803d", fontSize: "0.95rem" }}>
+                      {product.stock} sản phẩm có sẵn
+                    </span>
                   </div>
                 ) : (
-                  <span className="badge bg-danger fs-6">Hết hàng</span>
+                  <span className="badge fs-6 px-3 py-2" style={{ background: "#dc2626", letterSpacing: "0.02em" }}>
+                    <iconify-icon icon="ph:x-circle" class="me-1"></iconify-icon>
+                    Hết hàng
+                  </span>
                 )}
               </div>
 
@@ -265,12 +289,15 @@ function ProductDetailPage() {
 
               {/* Meta */}
               <div className="pt-3 mt-2" style={{ borderTop: "1px solid #f0e8df" }}>
-                <div className="row g-2 text-muted small">
-                  <div className="col-6">
+                <div className="row g-2 small">
+                  <div className="col-6" style={{ color: "#5a4a3f" }}>
                     <iconify-icon icon="ph:package" class="me-1"></iconify-icon>
-                    Tồn kho: <strong className={inStock ? "text-success" : "text-danger"}>{product.stock}</strong>
+                    Tồn kho:{" "}
+                    <strong style={{ color: inStock ? "#15803d" : "#dc2626", fontSize: "1rem" }}>
+                      {product.stock}
+                    </strong>
                   </div>
-                  <div className="col-6">
+                  <div className="col-6 text-muted">
                     <iconify-icon icon="ph:chart-line-up" class="me-1"></iconify-icon>
                     Đã bán: <strong>{product.sold}</strong>
                   </div>

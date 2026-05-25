@@ -1,9 +1,10 @@
 import express from "express";
-import { getPromotions, createPromotion, updatePromotion, deletePromotion } from "../controllers/promotionController.js";
+import { getPromotions, createPromotion, updatePromotion, deletePromotion, getActiveFreeship } from "../controllers/promotionController.js";
 import { isAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
 
+router.get("/active-freeship", getActiveFreeship);
 router.get("/", isAdmin, getPromotions);
 router.post("/", isAdmin, createPromotion);
 router.put("/:id", isAdmin, updatePromotion);

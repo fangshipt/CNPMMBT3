@@ -4,7 +4,7 @@ import { Button, message, Spin, Tag } from 'antd';
 import { PlusOutlined, CheckCircleFilled } from '@ant-design/icons';
 import { CartContext } from '../components/context/cartContext';
 import { AuthContext } from '../components/context/authContext';
-import { getAddressesApi, createOrderApi, formatPrice, getImageUrl } from '../util/api';
+import { getAddressesApi, createOrderApi, formatPrice, getImageUrl, getActiveFreeshipApi } from '../util/api';
 
 const PAYMENT_METHODS = [
     {
@@ -30,16 +30,25 @@ function CheckoutPage() {
     const [paymentMethod, setPaymentMethod] = useState('COD');
     const [loading, setLoading] = useState(true);
     const [placing, setPlacing] = useState(false);
+    const [hasFreeship, setHasFreeship] = useState(false);
+    const [freeshipProductIds, setFreeshipProductIds] = useState(new Set());
 
     useEffect(() => {
         if (!auth.isAuthenticated) { navigate('/login'); return; }
         const loadData = async () => {
-            const res = await getAddressesApi();
-            if (res?.EC === 0) {
-                setAddresses(res.data);
-                const def = res.data.find(a => a.isDefault);
+            const [addrRes, freeshipRes] = await Promise.all([
+                getAddressesApi(),
+                getActiveFreeshipApi(),
+            ]);
+            if (addrRes?.EC === 0) {
+                setAddresses(addrRes.data);
+                const def = addrRes.data.find(a => a.isDefault);
                 if (def) setSelectedAddressId(def._id);
-                else if (res.data.length === 0) navigate('/addresses?from=checkout');
+                else if (addrRes.data.length === 0) navigate('/addresses?from=checkout');
+            }
+            if (freeshipRes?.EC === 0) {
+                setHasFreeship(freeshipRes.data.hasFreeship);
+                setFreeshipProductIds(new Set(freeshipRes.data.productIds || []));
             }
             setLoading(false);
         };
@@ -62,7 +71,13 @@ function CheckoutPage() {
     const selectedAddress = addresses.find(a => a._id === selectedAddressId);
     const isHCM = selectedAddress?.province?.toLowerCase().includes('hồ chí minh') ||
                   selectedAddress?.province?.toLowerCase().includes('ho chi minh');
-    const shippingFee = selectedAddress ? (isHCM ? 10000 : 30000) : 0;
+    const baseShippingFee = selectedAddress ? (isHCM ? 10000 : 30000) : 0;
+    const cartProductIds = items.map(item => (item.product?._id || item.product)?.toString());
+    const cartHasFreeship = hasFreeship && (
+        freeshipProductIds.size === 0 ||
+        cartProductIds.some(id => freeshipProductIds.has(id))
+    );
+    const shippingFee = cartHasFreeship ? 0 : baseShippingFee;
     const orderTotal = cartTotal + shippingFee;
 
     const handlePlaceOrder = async () => {
@@ -219,10 +234,18 @@ function CheckoutPage() {
                             <div className="d-flex justify-content-between mb-3">
                                 <span className="text-muted">Phí vận chuyển</span>
                                 <span>
-                                    {selectedAddress
-                                        ? <span>{formatPrice(shippingFee)} <small className="text-muted">({isHCM ? 'Nội thành HCM' : 'Ngoại thành'})</small></span>
-                                        : <span className="text-muted small">Chọn địa chỉ để tính phí</span>
-                                    }
+                                    {cartHasFreeship ? (
+                                        <span>
+                                            <span className="text-decoration-line-through text-muted me-1" style={{ fontSize: '0.82rem' }}>
+                                                {selectedAddress ? formatPrice(baseShippingFee) : ''}
+                                            </span>
+                                            <span className="fw-semibold" style={{ color: '#16a34a' }}>Miễn phí 🚚</span>
+                                        </span>
+                                    ) : selectedAddress ? (
+                                        <span>{formatPrice(shippingFee)} <small className="text-muted">({isHCM ? 'Nội thành HCM' : 'Ngoại thành'})</small></span>
+                                    ) : (
+                                        <span className="text-muted small">Chọn địa chỉ để tính phí</span>
+                                    )}
                                 </span>
                             </div>
                             <div className="d-flex justify-content-between mb-4">

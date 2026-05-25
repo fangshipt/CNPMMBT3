@@ -58,7 +58,7 @@ function ProductManagement() {
     form.resetFields();
     form.setFieldsValue({
       isActive: true, isBestSeller: false, isNewProduct: false,
-      isFeatured: false, stock: 0, discountPrice: 0,
+      isFeatured: false, stock: 0,
     });
     setModalOpen(true);
   };
@@ -77,7 +77,6 @@ function ProductManagement() {
       name: product.name,
       description: product.description,
       price: product.price,
-      discountPrice: product.discountPrice,
       stock: product.stock,
       category: product.category?._id,
       isBestSeller: product.isBestSeller,
@@ -387,7 +386,7 @@ function ProductManagement() {
           </div>
 
           <div className="row g-3">
-            <div className="col-md-4">
+            <div className="col-md-6">
               <Form.Item
                 label="Giá gốc (đ)"
                 name="price"
@@ -402,18 +401,7 @@ function ProductManagement() {
                 />
               </Form.Item>
             </div>
-            <div className="col-md-4">
-              <Form.Item label="Giá khuyến mãi (đ)" name="discountPrice">
-                <InputNumber
-                  style={{ width: "100%" }}
-                  min={0}
-                  placeholder="0 = không giảm"
-                  formatter={(v) => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                  parser={(v) => v.replace(/,/g, "")}
-                />
-              </Form.Item>
-            </div>
-            <div className="col-md-4">
+            <div className="col-md-6">
               <Form.Item label="Tồn kho" name="stock">
                 <InputNumber style={{ width: "100%" }} min={0} placeholder="0" />
               </Form.Item>
