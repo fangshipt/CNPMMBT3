@@ -68,40 +68,40 @@ function OrderDetailPage() {
     return (
         <div style={{ background: '#F9F3EC', minHeight: '100vh' }}>
             <div className="container py-5">
-                <div className="d-flex align-items-center gap-3 mb-4">
-                    <Link to="/orders" className="text-muted" style={{ fontSize: '0.9rem' }}>
-                        <iconify-icon icon="ph:arrow-left" class="me-1"></iconify-icon>Đơn hàng của tôi
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+                    <Link to="/orders" style={{ color: '#8a7060', fontSize: '0.9rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <iconify-icon icon="ph:arrow-left"></iconify-icon>Đơn hàng của tôi
                     </Link>
-                    <span className="text-muted">/</span>
-                    <span style={{ color: '#3a2e28', fontSize: '0.9rem' }}>{order.orderCode || '#' + order._id.slice(-8).toUpperCase()}</span>
+                    <span style={{ color: '#ccc' }}>/</span>
+                    <span style={{ color: '#3a2e28', fontSize: '0.9rem', fontWeight: 600 }}>{order.orderCode || '#' + order._id.slice(-8).toUpperCase()}</span>
                 </div>
 
                 <div className="row g-4">
                     <div className="col-lg-8">
                         {/* Trạng thái */}
                         <div className="bg-white rounded-4 shadow-sm p-4 mb-4">
-                            <div className="d-flex justify-content-between align-items-center mb-3">
-                                <h5 className="fw-semibold m-0" style={{ color: '#3a2e28' }}>Trạng thái đơn hàng</h5>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                                <h5 style={{ fontWeight: 700, margin: 0, color: '#3a2e28' }}>Trạng thái đơn hàng</h5>
                                 <Tag color={cfg.color} style={{ fontSize: '0.9rem', padding: '4px 14px' }}>{cfg.label}</Tag>
                             </div>
 
                             {/* Progress bar cho các đơn thông thường */}
                             {!['cancelled', 'cancel_requested'].includes(order.status) && (
-                                <div className="d-flex align-items-center mb-4">
+                                <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 24 }}>
                                     {ORDER_STEPS.map((step, idx) => {
                                         const stepCfg = STATUS_CONFIG[step];
                                         const currentIdx = ORDER_STEPS.indexOf(order.status);
                                         const done = idx <= currentIdx;
                                         return (
-                                            <div key={step} className="d-flex align-items-center flex-grow-1">
-                                                <div className="d-flex flex-column align-items-center" style={{ minWidth: 60 }}>
-                                                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: done ? '#ff6b35' : '#e0d5ca', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <div key={step} style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 56 }}>
+                                                    <div style={{ width: 34, height: 34, borderRadius: '50%', background: done ? '#ff6b35' : '#e0d5ca', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                                                         <iconify-icon icon={stepCfg.icon} style={{ color: '#fff', fontSize: '1rem' }}></iconify-icon>
                                                     </div>
-                                                    <span style={{ fontSize: '0.7rem', color: done ? '#ff6b35' : '#aaa', textAlign: 'center', marginTop: 4, maxWidth: 70 }}>{stepCfg.label}</span>
+                                                    <span style={{ fontSize: '0.68rem', color: done ? '#ff6b35' : '#aaa', textAlign: 'center', marginTop: 5, maxWidth: 64, lineHeight: 1.3 }}>{stepCfg.label}</span>
                                                 </div>
                                                 {idx < ORDER_STEPS.length - 1 && (
-                                                    <div style={{ flex: 1, height: 2, background: idx < currentIdx ? '#ff6b35' : '#e0d5ca', margin: '0 4px', marginBottom: 24 }}></div>
+                                                    <div style={{ flex: 1, height: 2, background: idx < currentIdx ? '#ff6b35' : '#e0d5ca', margin: '0 4px', marginBottom: 22, flexShrink: 1 }}></div>
                                                 )}
                                             </div>
                                         );
@@ -117,8 +117,8 @@ function OrderDetailPage() {
                                         children: (
                                             <div>
                                                 <Tag color={STATUS_CONFIG[h.status]?.color}>{STATUS_CONFIG[h.status]?.label || h.status}</Tag>
-                                                {h.note && <span className="text-muted small ms-2">{h.note}</span>}
-                                                <div className="text-muted" style={{ fontSize: '0.75rem' }}>{formatDate(h.createdAt)}</div>
+                                                {h.note && <span style={{ color: '#8a7060', fontSize: '0.82rem', marginLeft: 8 }}>{h.note}</span>}
+                                                <div style={{ color: '#aaa', fontSize: '0.75rem', marginTop: 2 }}>{formatDate(h.createdAt)}</div>
                                             </div>
                                         ),
                                     }))}
@@ -128,47 +128,50 @@ function OrderDetailPage() {
 
                         {/* Sản phẩm */}
                         <div className="bg-white rounded-4 shadow-sm p-4 mb-4">
-                            <h5 className="fw-semibold mb-3" style={{ color: '#3a2e28' }}>Sản phẩm đặt hàng</h5>
+                            <h5 style={{ fontWeight: 700, marginBottom: 16, color: '#3a2e28' }}>Sản phẩm đặt hàng</h5>
                             {order.items.map((item, idx) => (
-                                <div key={idx} className="d-flex align-items-center gap-3 py-2" style={{ borderBottom: '1px solid #f0e8df' }}>
-                                    <img src={item.image ? getImageUrl(item.image) : '/assets/placeholder.png'} alt={item.name}
-                                        style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 8 }} />
-                                    <div className="flex-grow-1">
-                                        <div className="fw-semibold" style={{ color: '#3a2e28' }}>{item.name}</div>
-                                        <div className="text-muted small">Đơn giá: {formatPrice(item.price)}</div>
+                                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 0', borderBottom: '1px solid #f0e8df' }}>
+                                    <Link to={`/products/${item.slug || item.product}`} style={{ flexShrink: 0 }}>
+                                        <img src={item.image ? getImageUrl(item.image) : '/assets/placeholder.png'} alt={item.name}
+                                            style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 10, border: '1px solid #f0e8df', display: 'block' }} />
+                                    </Link>
+                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                        <Link to={`/products/${item.slug || item.product}`} style={{ textDecoration: 'none' }}>
+                                            <div style={{ fontWeight: 600, color: '#3a2e28', fontSize: '0.9rem', marginBottom: 3 }}>{item.name}</div>
+                                        </Link>
+                                        <div style={{ fontSize: '0.8rem', color: '#8a7060' }}>Đơn giá: <span style={{ color: '#ff6b35', fontWeight: 600 }}>{formatPrice(item.price)}</span></div>
                                     </div>
-                                    <div className="text-end">
-                                        <div className="text-muted small">x{item.quantity}</div>
-                                        <div className="fw-bold text-primary">{formatPrice(item.price * item.quantity)}</div>
+                                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                                        <div style={{ fontSize: '0.82rem', color: '#aaa', marginBottom: 3 }}>x{item.quantity}</div>
+                                        <div style={{ fontWeight: 700, color: '#ff6b35', fontSize: '0.95rem' }}>{formatPrice(item.price * item.quantity)}</div>
                                     </div>
                                 </div>
                             ))}
-                            <div className="d-flex justify-content-between pt-3">
-                                <span className="fw-semibold">Tổng thanh toán</span>
-                                <strong className="text-primary fs-5">{formatPrice(order.totalAmount)}</strong>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', paddingTop: 14 }}>
+                                <span style={{ fontWeight: 700, color: '#3a2e28' }}>Tổng thanh toán:</span>
+                                <strong style={{ color: '#ff6b35', fontSize: '1.1rem' }}>{formatPrice(order.totalAmount)}</strong>
                             </div>
                         </div>
 
                         {canCancel && (
-                            <div className="text-end">
+                            <div style={{ textAlign: 'right' }}>
                                 <Button danger onClick={() => setCancelModal(true)}>
-                                    <iconify-icon icon="ph:x-circle" class="me-2"></iconify-icon>
                                     {cancelLabel}
                                 </Button>
                             </div>
                         )}
                         {order.status === 'pending' && minutesSince > 30 && (
-                            <p className="text-muted small text-end mt-1">Đã quá 30 phút, không thể hủy tự do. Liên hệ shop nếu cần hỗ trợ.</p>
+                            <p style={{ color: '#8a7060', fontSize: '0.8rem', textAlign: 'right', marginTop: 6 }}>Đã quá 30 phút, không thể hủy tự do. Liên hệ shop nếu cần hỗ trợ.</p>
                         )}
                     </div>
 
                     <div className="col-lg-4">
                         {/* Địa chỉ giao hàng */}
                         <div className="bg-white rounded-4 shadow-sm p-4 mb-4">
-                            <h5 className="fw-semibold mb-3" style={{ color: '#3a2e28' }}>Địa chỉ giao hàng</h5>
-                            <div className="fw-semibold mb-1">{order.shippingAddress?.recipientName}</div>
-                            <div className="text-muted small mb-1">{order.shippingAddress?.phone}</div>
-                            <div className="text-muted small">
+                            <h5 style={{ fontWeight: 700, marginBottom: 16, color: '#3a2e28' }}>Địa chỉ giao hàng</h5>
+                            <div style={{ fontWeight: 600, color: '#3a2e28', marginBottom: 6 }}>{order.shippingAddress?.recipientName}</div>
+                            <div style={{ fontSize: '0.85rem', color: '#8a7060', marginBottom: 4 }}>{order.shippingAddress?.phone}</div>
+                            <div style={{ fontSize: '0.85rem', color: '#8a7060', lineHeight: 1.6 }}>
                                 {order.shippingAddress?.detail}, {order.shippingAddress?.ward},<br />
                                 {order.shippingAddress?.district}, {order.shippingAddress?.province}
                             </div>
@@ -176,22 +179,26 @@ function OrderDetailPage() {
 
                         {/* Thanh toán */}
                         <div className="bg-white rounded-4 shadow-sm p-4">
-                            <h5 className="fw-semibold mb-3" style={{ color: '#3a2e28' }}>Thông tin thanh toán</h5>
-                            <div className="d-flex justify-content-between mb-2">
-                                <span className="text-muted small">Phương thức</span>
+                            <h5 style={{ fontWeight: 700, marginBottom: 16, color: '#3a2e28' }}>Thông tin thanh toán</h5>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                                <span style={{ fontSize: '0.85rem', color: '#8a7060', fontWeight: 500 }}>Phương thức:</span>
                                 {order.paymentMethod === 'VNPAY'
-                                    ? <Tag color="blue">VNPay - Thanh toán online</Tag>
+                                    ? <Tag color="blue">VNPay - Online</Tag>
                                     : <Tag color="default">COD - Tiền mặt</Tag>
                                 }
                             </div>
-                            <div className="d-flex justify-content-between">
-                                <span className="text-muted small">Tổng tiền</span>
-                                <strong className="text-primary">{formatPrice(order.totalAmount)}</strong>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                                <span style={{ fontSize: '0.85rem', color: '#8a7060', fontWeight: 500 }}>Phí vận chuyển:</span>
+                                <span style={{ fontWeight: 700, color: '#16a34a', fontSize: '0.9rem' }}>Miễn phí</span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: 10, paddingTop: 12, borderTop: '1px solid #f0e8df' }}>
+                                <span style={{ fontWeight: 700, color: '#3a2e28' }}>Tổng tiền:</span>
+                                <strong style={{ color: '#ff6b35', fontSize: '1.1rem' }}>{formatPrice(order.totalAmount)}</strong>
                             </div>
                             {order.cancelReason && (
-                                <div className="mt-3 p-3 rounded-3" style={{ background: '#fff5f5', border: '1px solid #ffcccc' }}>
-                                    <div className="text-danger small fw-semibold">Lý do hủy:</div>
-                                    <div className="text-muted small">{order.cancelReason}</div>
+                                <div style={{ marginTop: 14, padding: '10px 14px', borderRadius: 10, background: '#fff5f5', border: '1px solid #ffcccc' }}>
+                                    <div style={{ color: '#e74c3c', fontSize: '0.82rem', fontWeight: 600, marginBottom: 4 }}>Lý do hủy:</div>
+                                    <div style={{ color: '#8a7060', fontSize: '0.82rem' }}>{order.cancelReason}</div>
                                 </div>
                             )}
                         </div>
@@ -208,7 +215,7 @@ function OrderDetailPage() {
                 cancelText="Đóng"
                 okButtonProps={{ danger: true, loading: cancelling }}
             >
-                <p className="text-muted mb-3">
+                <p style={{ color: '#8a7060', marginBottom: 12 }}>
                     {order.status === 'preparing'
                         ? 'Shop đang chuẩn bị hàng. Yêu cầu hủy sẽ được gửi đến shop để xác nhận.'
                         : 'Bạn có chắc muốn hủy đơn hàng này không?'}

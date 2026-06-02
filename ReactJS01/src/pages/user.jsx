@@ -1,13 +1,14 @@
-import { useState, useContext, useRef } from "react";
-import { Form, Input, Button, message, Upload, Avatar, Tabs, Spin } from "antd";
+import { useState, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Form, Input, Button, message, Avatar, Tabs, Spin } from "antd";
 import { UserOutlined, LockOutlined, CameraOutlined } from "@ant-design/icons";
-import { AuthContext } from "../components/context/authContext";
+import { updateUserSuccess } from "../store/authSlice";
 import { updateProfileApi, changePasswordApi, updateAvatarApi } from "../util/api";
 import axios from "../util/axios.customize";
 
 const AccountPage = () => {
-    const { auth, setAuth } = useContext(AuthContext);
-    const user = auth?.user || {};
+    const dispatch = useDispatch();
+    const user     = useSelector((state) => state.auth.user);
     const [profileLoading, setProfileLoading] = useState(false);
     const [pwdLoading, setPwdLoading] = useState(false);
     const [avatarLoading, setAvatarLoading] = useState(false);
@@ -20,10 +21,7 @@ const AccountPage = () => {
         setProfileLoading(false);
         if (res?.EC === 0) {
             message.success("Cập nhật thông tin thành công!");
-            setAuth(prev => ({
-                ...prev,
-                user: { ...prev.user, name: values.fullName, fullName: values.fullName }
-            }));
+            dispatch(updateUserSuccess({ name: values.fullName, fullName: values.fullName, phone: values.phone }));
         } else {
             message.error(res?.EM || "Cập nhật thất bại");
         }
@@ -63,7 +61,8 @@ const AccountPage = () => {
             const res = await updateAvatarApi({ avatar: url });
             if (res?.EC === 0) {
                 setAvatarUrl(url);
-                setAuth(prev => ({ ...prev, user: { ...prev.user, avatar: url } }));
+                dispatch(updateUserSuccess({ avatar: url }));
+                localStorage.setItem('avatar', url);
                 message.success("Cập nhật ảnh đại diện thành công!");
             } else {
                 message.error(res?.EM || "Cập nhật ảnh thất bại");
@@ -80,7 +79,7 @@ const AccountPage = () => {
             key: "profile",
             label: (
                 <span>
-                    <UserOutlined className="me-1" />
+                    <UserOutlined className="mr-1" />
                     Thông tin cá nhân
                 </span>
             ),
@@ -122,7 +121,7 @@ const AccountPage = () => {
             key: "password",
             label: (
                 <span>
-                    <LockOutlined className="me-1" />
+                    <LockOutlined className="mr-1" />
                     Đổi mật khẩu
                 </span>
             ),
@@ -182,7 +181,7 @@ const AccountPage = () => {
             key: "avatar",
             label: (
                 <span>
-                    <CameraOutlined className="me-1" />
+                    <CameraOutlined className="mr-1" />
                     Ảnh đại diện
                 </span>
             ),
@@ -211,7 +210,7 @@ const AccountPage = () => {
                         >
                             Chọn ảnh mới
                         </Button>
-                        <p className="text-muted small mt-3">
+                        <p className="text-gray-500 small mt-3">
                             Hỗ trợ JPG, PNG. Dung lượng tối đa 5MB.
                         </p>
                     </Spin>
@@ -223,12 +222,12 @@ const AccountPage = () => {
     return (
         <div style={{ background: "#F9F3EC", minHeight: "100vh" }} className="py-5">
             <div className="container">
-                <div className="row justify-content-center">
+                <div className="row justify-center">
                     <div className="col-12 col-md-8 col-lg-6">
                         <div className="bg-white rounded-4 shadow-sm overflow-hidden">
                             {/* Header */}
                             <div
-                                className="p-4 d-flex align-items-center gap-3"
+                                className="p-4 flex items-center gap-3"
                                 style={{ background: "#FFF8F0", borderBottom: "1px solid #f0e8df" }}
                             >
                                 <Avatar
@@ -238,10 +237,10 @@ const AccountPage = () => {
                                     style={{ backgroundColor: "#ff6b35", flexShrink: 0 }}
                                 />
                                 <div>
-                                    <h5 className="mb-0 fw-normal" style={{ color: "#3a2e28" }}>
+                                    <h5 className="mb-0 font-normal" style={{ color: "#3a2e28" }}>
                                         {user.fullName || user.name || "Tài khoản của tôi"}
                                     </h5>
-                                    <p className="mb-0 text-muted small">{user.email}</p>
+                                    <p className="mb-0 text-gray-500 small">{user.email}</p>
                                 </div>
                             </div>
 

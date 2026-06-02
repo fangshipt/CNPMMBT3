@@ -279,7 +279,7 @@ function ProductManagement() {
 
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center mb-3">
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
         <div>
           <h4 className="mb-0" style={{ color: "#3a2e28", fontWeight: 700 }}>Quản lý sản phẩm</h4>
           <small style={{ color: "#8a7060" }}>Tổng: {totalProducts} sản phẩm</small>
@@ -295,7 +295,7 @@ function ProductManagement() {
       </div>
 
       {/* Filter bar */}
-      <div className="d-flex flex-wrap gap-2 mb-3">
+      <div className="flex flex-wrap gap-2 mb-3">
         <Input
           placeholder="Tìm theo tên sản phẩm..."
           prefix={<SearchOutlined style={{ color: "#bbb" }} />}

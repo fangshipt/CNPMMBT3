@@ -193,20 +193,20 @@ function AddressesPage() {
     return (
         <div style={{ background: '#F9F3EC', minHeight: '100vh' }}>
             <div className="container py-5">
-                <div className="d-flex justify-content-between align-items-center mb-4">
+                <div className="flex justify-between items-center mb-4">
                     <div>
-                        <h2 className="fw-normal m-0" style={{ color: '#3a2e28' }}>
-                            <iconify-icon icon="ph:map-pin" class="me-2"></iconify-icon>
+                        <h2 className="font-normal m-0" style={{ color: '#3a2e28' }}>
+                            <iconify-icon icon="ph:map-pin" class="mr-2"></iconify-icon>
                             Danh sách địa chỉ
                         </h2>
                         {fromCheckout && (
-                            <p className="text-muted small mt-1 mb-0">
-                                <iconify-icon icon="ph:info" class="me-1"></iconify-icon>
+                            <p className="text-gray-500 small mt-1 mb-0">
+                                <iconify-icon icon="ph:info" class="mr-1"></iconify-icon>
                                 Thêm địa chỉ để tiếp tục thanh toán
                             </p>
                         )}
                     </div>
-                    <div className="d-flex gap-2">
+                    <div className="flex gap-2">
                         {fromCheckout && (
                             <Button onClick={() => navigate('/checkout')}>← Quay lại thanh toán</Button>
                         )}
@@ -224,21 +224,21 @@ function AddressesPage() {
                 <div className="row g-3">
                     {addresses.map((addr) => (
                         <div key={addr._id} className="col-md-6">
-                            <div className="bg-white rounded-4 shadow-sm p-4 h-100" style={{ border: addr.isDefault ? '2px solid #f97316' : '1px solid #f0e8df' }}>
-                                <div className="d-flex justify-content-between align-items-start mb-2">
+                            <div className="bg-white rounded-4 shadow-sm p-4 h-full" style={{ border: addr.isDefault ? '2px solid #f97316' : '1px solid #f0e8df' }}>
+                                <div className="flex justify-between items-start mb-2">
                                     <div>
                                         <strong style={{ color: '#3a2e28' }}>{addr.recipientName}</strong>
-                                        {addr.isDefault && <Tag color="orange" className="ms-2">Mặc định</Tag>}
+                                        {addr.isDefault && <Tag color="orange" className="ml-2">Mặc định</Tag>}
                                     </div>
-                                    <div className="d-flex gap-2">
+                                    <div className="flex gap-2">
                                         <Button size="small" icon={<EditOutlined />} onClick={() => openEdit(addr)} />
                                         <Popconfirm title="Xóa địa chỉ này?" onConfirm={() => handleDelete(addr._id)} okText="Xóa" cancelText="Hủy">
                                             <Button size="small" danger icon={<DeleteOutlined />} />
                                         </Popconfirm>
                                     </div>
                                 </div>
-                                <div className="text-muted small mb-1">{addr.phone}</div>
-                                <div className="text-muted small">
+                                <div className="text-gray-500 small mb-1">{addr.phone}</div>
+                                <div className="text-gray-500 small">
                                     {addr.detail}, {addr.ward}, {addr.district}, {addr.province}
                                 </div>
                                 {!addr.isDefault && (
@@ -322,10 +322,10 @@ function AddressesPage() {
 
                     <Form.Item name="isDefault" valuePropName="checked">
                         <Switch checkedChildren="Mặc định" unCheckedChildren="Mặc định" />
-                        <span className="ms-2 text-muted small">Đặt làm địa chỉ mặc định</span>
+                        <span className="ml-2 text-gray-500 small">Đặt làm địa chỉ mặc định</span>
                     </Form.Item>
 
-                    <div className="d-flex gap-2 justify-content-end">
+                    <div className="flex gap-2 justify-end">
                         <Button onClick={() => setModalOpen(false)}>Hủy</Button>
                         <Button type="primary" htmlType="submit">Lưu địa chỉ</Button>
                     </div>

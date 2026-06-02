@@ -15,8 +15,8 @@ const SORT_OPTIONS = [
 
 function FilterCard({ title, children }) {
   return (
-    <div className="mb-3 p-3" style={{ background: "#fff", borderRadius: "12px", boxShadow: "0 1px 6px rgba(0,0,0,0.06)" }}>
-      <h6 className="fw-bold mb-3 pb-2" style={{ borderBottom: "1px solid #f0e8df", color: "#5a4a3f" }}>
+    <div className="mb-3" style={{ background: "#fff", borderRadius: "14px", boxShadow: "0 1px 8px rgba(0,0,0,0.07)", padding: "16px 18px" }}>
+      <h6 className="font-bold mb-3 pb-2" style={{ borderBottom: "1px solid #f0e8df", color: "#5a4a3f", fontSize: "0.95rem" }}>
         {title}
       </h6>
       {children}
@@ -179,7 +179,7 @@ function ProductsPage() {
 
   return (
     <div style={{ background: "#F9F3EC", minHeight: "100vh" }}>
-      <div className="py-5" style={{ maxWidth: 1600, margin: "0 auto", padding: "40px 32px" }}>
+      <div className="py-5" style={{ maxWidth: 1600, margin: "0 auto", padding: "40px 24px 40px 16px" }}>
         {/* Breadcrumb */}
         <nav aria-label="breadcrumb" className="mb-3">
           <ol className="breadcrumb">
@@ -191,84 +191,16 @@ function ProductsPage() {
         {/* Top 10 Bán chạy + Xem nhiều */}
         <TopProductsSection />
 
-        {/* Heading + Search */}
-        <div className="mb-4 mt-4">
-          <h2 className="fw-normal mb-3" style={{ color: "#3a2e28" }}>
-            {activeCategory ? activeCategory.name : "Tất cả sản phẩm"}
-          </h2>
-
-          <form className="d-flex gap-2" onSubmit={handleSearch}>
-            <div className="input-group">
-              <span className="input-group-text bg-white border-end-0" style={{ borderColor: "#e0d5ca", borderRadius: "10px 0 0 10px" }}>
-                <iconify-icon icon="ph:magnifying-glass" style={{ color: "#aaa" }}></iconify-icon>
-              </span>
-              <input
-                type="text"
-                className="form-control border-start-0"
-                placeholder="Tìm kiếm sản phẩm..."
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                style={{ borderColor: "#e0d5ca", borderRadius: "0 10px 10px 0", boxShadow: "none" }}
-              />
-            </div>
-            <button className="btn btn-primary px-4 rounded-3" type="submit">Tìm</button>
-            {hasActiveFilters && (
-              <button className="btn rounded-3" type="button" onClick={resetFilters}
-                style={{ border: "1px solid #c8b8ac", color: "#5a4a3f", background: "#fff" }}>
-                Xóa lọc
-              </button>
-            )}
-          </form>
-
-          {/* Active filter chips */}
-          {hasActiveFilters && (
-            <div className="d-flex flex-wrap gap-2 mt-2">
-              {search && (
-                <span className="badge rounded-pill d-flex align-items-center" style={chipStyle}>
-                  <iconify-icon icon="ph:magnifying-glass" class="me-1"></iconify-icon>{search}
-                  <button style={chipBtnStyle} onClick={() => { setSearch(""); setSearchInput(""); }}>×</button>
-                </span>
-              )}
-              {activeCategory && (
-                <span className="badge rounded-pill d-flex align-items-center" style={chipStyle}>
-                  <iconify-icon icon="ph:tag" class="me-1"></iconify-icon>{activeCategory.name}
-                  <button style={chipBtnStyle} onClick={() => changeCategory("")}>×</button>
-                </span>
-              )}
-              {isBestSeller && (
-                <span className="badge rounded-pill d-flex align-items-center" style={{ ...chipStyle, background: "#ff6b35", color: "#fff" }}>
-                  Bán chạy<button style={{ ...chipBtnStyle, color: "#fff" }} onClick={() => changeBestSeller(false)}>×</button>
-                </span>
-              )}
-              {isNewProduct && (
-                <span className="badge rounded-pill d-flex align-items-center" style={{ ...chipStyle, background: "#10b981", color: "#fff" }}>
-                  Hàng mới<button style={{ ...chipBtnStyle, color: "#fff" }} onClick={() => changeNewProduct(false)}>×</button>
-                </span>
-              )}
-              {isOnSale && (
-                <span className="badge rounded-pill d-flex align-items-center" style={{ ...chipStyle, background: "#ef4444", color: "#fff" }}>
-                  🏷️ Khuyến mãi<button style={{ ...chipBtnStyle, color: "#fff" }} onClick={() => changeIsOnSale(false)}>×</button>
-                </span>
-              )}
-              {isFreeship && (
-                <span className="badge rounded-pill d-flex align-items-center" style={{ ...chipStyle, background: "#0891b2", color: "#fff" }}>
-                  🚚 Freeship<button style={{ ...chipBtnStyle, color: "#fff" }} onClick={() => changeIsFreeship(false)}>×</button>
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-
-        <div className="row g-4">
+        <div className="row g-4 mt-2">
           {/* Sidebar */}
-          <div className="col-xl-2 col-lg-3" style={{ minWidth: 200 }}>
+          <div className="col-xl-2 col-lg-3" style={{ minWidth: 230 }}>
             <FilterCard title="Danh mục">
-              <div className="d-flex flex-column gap-1">
+              <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 {[{ _id: "", name: "Tất cả danh mục" }, ...categories].map((cat) => (
-                  <label key={cat._id} className="d-flex align-items-center gap-2" style={{ cursor: "pointer", padding: "4px 0" }}>
+                  <label key={cat._id} style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", padding: "5px 0" }}>
                     <input type="radio" name="category" checked={selectedCategory === cat._id}
                       onChange={() => changeCategory(cat._id)} />
-                    <span style={{ color: selectedCategory === cat._id ? "#5a4a3f" : "#666", fontWeight: selectedCategory === cat._id ? 600 : 400 }}>
+                    <span style={{ fontSize: "0.88rem", color: selectedCategory === cat._id ? "#5a4a3f" : "#666", fontWeight: selectedCategory === cat._id ? 600 : 400 }}>
                       {cat.name}
                     </span>
                   </label>
@@ -284,7 +216,7 @@ function ProductsPage() {
                 <input type="number" className="form-control form-control-sm mb-2" placeholder="Giá đến (đ)"
                   value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} min="0"
                   style={{ borderColor: "#e0d5ca", borderRadius: "8px" }} />
-                <button className="btn btn-sm w-100 rounded-2" type="submit"
+                <button className="btn btn-sm w-full rounded-2" type="submit"
                   style={{ background: "#f0e8df", color: "#5a4a3f", border: "none" }}
                   onClick={() => { /* trigger filter via state */ setSearch(search); }}>
                   Áp dụng
@@ -293,26 +225,26 @@ function ProductsPage() {
             </FilterCard>
 
             <FilterCard title="Lọc nhanh">
-              <label className="d-flex align-items-center gap-2 mb-2" style={{ cursor: "pointer" }}>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", marginBottom: 8 }}>
                 <input type="checkbox" checked={isBestSeller}
                   onChange={(e) => changeBestSeller(e.target.checked)} />
-                <span>🔥 Bán chạy nhất</span>
+                <span style={{ fontSize: "0.88rem" }}>🔥 Bán chạy nhất</span>
               </label>
-              <label className="d-flex align-items-center gap-2 mb-2" style={{ cursor: "pointer" }}>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", marginBottom: 8 }}>
                 <input type="checkbox" checked={isNewProduct}
                   onChange={(e) => changeNewProduct(e.target.checked)} />
-                <span>✨ Hàng mới về</span>
+                <span style={{ fontSize: "0.88rem" }}>✨ Hàng mới về</span>
               </label>
-              <label className="d-flex align-items-center gap-2 mb-2" style={{ cursor: "pointer" }}>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", marginBottom: 8 }}>
                 <input type="checkbox" checked={isOnSale}
                   onChange={(e) => changeIsOnSale(e.target.checked)} />
-                <span>🏷️ Đang khuyến mãi</span>
+                <span style={{ fontSize: "0.88rem" }}>🏷️ Đang khuyến mãi</span>
               </label>
               {hasActiveFreeship && (
-                <label className="d-flex align-items-center gap-2" style={{ cursor: "pointer" }}>
+                <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
                   <input type="checkbox" checked={isFreeship}
                     onChange={(e) => changeIsFreeship(e.target.checked)} />
-                  <span style={{ color: "#0891b2", fontWeight: 500 }}>🚚 Freeship toàn quốc</span>
+                  <span style={{ color: "#3a2e28", fontSize: "0.88rem" }}>🚚 Freeship toàn quốc</span>
                 </label>
               )}
             </FilterCard>
@@ -320,12 +252,82 @@ function ProductsPage() {
 
           {/* Product Grid */}
           <div className="col-xl-10 col-lg-9">
+            {/* Heading + Search */}
+            <div style={{ marginBottom: 20 }}>
+              <h2 className="font-normal mb-3" style={{ color: "#3a2e28" }}>
+                {activeCategory ? activeCategory.name : "Tất cả sản phẩm"}
+              </h2>
+              <form style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "nowrap" }} onSubmit={handleSearch}>
+                <div style={{ display: "flex", alignItems: "center", flex: 1, background: "#fff", border: "1.5px solid #e0d5ca", borderRadius: 12, height: 44, padding: "0 14px", gap: 8 }}>
+                  <iconify-icon icon="ph:magnifying-glass" style={{ color: "#bbb", fontSize: "1rem", flexShrink: 0 }}></iconify-icon>
+                  <input
+                    type="text"
+                    placeholder="Tìm kiếm sản phẩm..."
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    style={{ flex: 1, border: 0, outline: "none", background: "transparent", fontSize: "0.88rem", color: "#3a2e28", boxShadow: "none" }}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  style={{ height: 44, padding: "0 24px", background: "#5a4a3f", color: "#fff", border: "none", borderRadius: 12, fontSize: "0.88rem", fontWeight: 500, cursor: "pointer", flexShrink: 0 }}
+                >
+                  Tìm
+                </button>
+                {hasActiveFilters && (
+                  <button
+                    type="button"
+                    onClick={resetFilters}
+                    style={{ height: 44, padding: "0 18px", background: "#fff", border: "1.5px solid #c8b8ac", color: "#5a4a3f", borderRadius: 12, fontSize: "0.88rem", fontWeight: 500, cursor: "pointer", flexShrink: 0 }}
+                  >
+                    Xóa lọc
+                  </button>
+                )}
+              </form>
+              {hasActiveFilters && (
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 10 }}>
+                  {search && (
+                    <span className="badge rounded-pill d-flex align-items-center" style={chipStyle}>
+                      {search}<button style={chipBtnStyle} onClick={() => { setSearch(""); setSearchInput(""); }}>×</button>
+                    </span>
+                  )}
+                  {activeCategory && (
+                    <span className="badge rounded-pill d-flex align-items-center" style={chipStyle}>
+                      {activeCategory.name}<button style={chipBtnStyle} onClick={() => changeCategory("")}>×</button>
+                    </span>
+                  )}
+                  {isBestSeller && (
+                    <span className="badge rounded-pill d-flex align-items-center" style={{ ...chipStyle, background: "#ff6b35", color: "#fff" }}>
+                      Bán chạy<button style={{ ...chipBtnStyle, color: "#fff" }} onClick={() => changeBestSeller(false)}>×</button>
+                    </span>
+                  )}
+                  {isNewProduct && (
+                    <span className="badge rounded-pill d-flex align-items-center" style={{ ...chipStyle, background: "#10b981", color: "#fff" }}>
+                      Hàng mới<button style={{ ...chipBtnStyle, color: "#fff" }} onClick={() => changeNewProduct(false)}>×</button>
+                    </span>
+                  )}
+                  {isOnSale && (
+                    <span className="badge rounded-pill d-flex align-items-center" style={{ ...chipStyle, background: "#ef4444", color: "#fff" }}>
+                      Khuyến mãi<button style={{ ...chipBtnStyle, color: "#fff" }} onClick={() => changeIsOnSale(false)}>×</button>
+                    </span>
+                  )}
+                  {isFreeship && (
+                    <span className="badge rounded-pill d-flex align-items-center" style={{ ...chipStyle, background: "#0891b2", color: "#fff" }}>
+                      Freeship<button style={{ ...chipBtnStyle, color: "#fff" }} onClick={() => changeIsFreeship(false)}>×</button>
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+
             {/* Sort bar */}
-            <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-              <span className="text-muted small">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
+              <span className="text-gray-500 small">
                 {loading ? "Đang tải..." : `Tìm thấy ${totalProducts} sản phẩm`}
               </span>
-              <select className="form-select form-select-sm rounded-3" style={{ width: "auto", borderColor: "#e0d5ca", background: "#fff" }}
+              <select
+                className="text-sm"
+                style={{ width: "auto", borderColor: "#e0d5ca", background: "#fff", border: "1.5px solid #e0d5ca", borderRadius: 10, padding: "6px 12px", color: "#5a4a3f", outline: "none", cursor: "pointer" }}
                 value={sortBy} onChange={(e) => changeSortBy(e.target.value)}>
                 {SORT_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -339,7 +341,13 @@ function ProductsPage() {
               <div className="text-center py-5" style={{ background: "#fff", borderRadius: "16px", color: "#888" }}>
                 <iconify-icon icon="ph:package" style={{ fontSize: "3rem", color: "#ccc" }}></iconify-icon>
                 <p className="mt-3">Không tìm thấy sản phẩm nào.</p>
-                <button className="btn btn-outline-primary rounded-3" onClick={resetFilters}>Xóa bộ lọc</button>
+                <button
+                  className="rounded-xl font-medium text-sm transition-opacity hover:opacity-85"
+                  style={{ padding: "8px 24px", background: "#5a4a3f", color: "#fff", border: "none", cursor: "pointer" }}
+                  onClick={resetFilters}
+                >
+                  Xóa bộ lọc
+                </button>
               </div>
             ) : (
               <>
@@ -365,14 +373,14 @@ function ProductsPage() {
                 {/* Load more indicator */}
                 {loadingMore && (
                   <div className="text-center py-4">
-                    <div className="spinner-border spinner-border-sm text-primary me-2" role="status" />
-                    <span className="text-muted small">Đang tải thêm sản phẩm...</span>
+                    <div className="spinner-border spinner-border-sm text-primary mr-2" role="status" />
+                    <span className="text-gray-500 small">Đang tải thêm sản phẩm...</span>
                   </div>
                 )}
 
                 {!hasMore && products.length > 0 && (
                   <div className="text-center py-3">
-                    <span className="text-muted small">— Đã hiển thị tất cả {totalProducts} sản phẩm —</span>
+                    <span className="text-gray-500 small">— Đã hiển thị tất cả {totalProducts} sản phẩm —</span>
                   </div>
                 )}
               </>

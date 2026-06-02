@@ -83,7 +83,7 @@ function OrderManagement() {
         {
             title: 'Địa chỉ',
             dataIndex: 'shippingAddress',
-            render: (addr) => <span className="text-muted" style={{ fontSize: '0.82rem' }}>{addr?.district}, {addr?.province}</span>,
+            render: (addr) => <span className="text-gray-500" style={{ fontSize: '0.82rem' }}>{addr?.district}, {addr?.province}</span>,
         },
         {
             title: 'Tổng tiền',
@@ -129,7 +129,7 @@ function OrderManagement() {
 
     return (
         <div>
-            <div className="d-flex justify-content-between align-items-center mb-4">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
                 <h4 style={{ color: '#3a2e28', fontWeight: 600 }}>Quản lý đơn hàng</h4>
                 <Space wrap>
                     <Input
@@ -162,7 +162,7 @@ function OrderManagement() {
                     scroll={{ x: 800 }}
                     size="small"
                 />
-                <div className="d-flex justify-content-end mt-3">
+                <div className="flex justify-end mt-3">
                     <Pagination current={page} total={total} pageSize={20} onChange={setPage} showSizeChanger={false} />
                 </div>
             </div>
@@ -197,12 +197,12 @@ function OrderManagement() {
                 {selectedOrder && (
                     <div>
                         {/* Status + Time */}
-                        <div className="d-flex justify-content-between align-items-center mb-3">
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                             <div>
                                 <strong>Trạng thái: </strong>
                                 <Tag color={STATUS_CONFIG[selectedOrder.status]?.color}>{STATUS_CONFIG[selectedOrder.status]?.label}</Tag>
                             </div>
-                            <span className="text-muted" style={{ fontSize: '0.83rem' }}>
+                            <span className="text-gray-500" style={{ fontSize: '0.83rem' }}>
                                 Đặt lúc: {formatDate(selectedOrder.createdAt)}
                             </span>
                         </div>
@@ -215,7 +215,7 @@ function OrderManagement() {
                         {/* Shipping address */}
                         <div className="mb-3">
                             <strong>Địa chỉ giao hàng:</strong>
-                            <div className="text-muted mt-1" style={{ fontSize: '0.88rem' }}>
+                            <div className="text-gray-500 mt-1" style={{ fontSize: '0.88rem' }}>
                                 {selectedOrder.shippingAddress?.recipientName} • {selectedOrder.shippingAddress?.phone}<br />
                                 {selectedOrder.shippingAddress?.detail}, {selectedOrder.shippingAddress?.ward},<br />
                                 {selectedOrder.shippingAddress?.district}, {selectedOrder.shippingAddress?.province}
@@ -226,7 +226,7 @@ function OrderManagement() {
                         <div className="mb-3">
                             <strong>Sản phẩm:</strong>
                             {selectedOrder.items?.map((item, idx) => (
-                                <div key={idx} className="d-flex align-items-center gap-3 mt-2 p-2 rounded" style={{ border: '1px solid #f0e8df' }}>
+                                <div key={idx} className="flex items-center gap-3 mt-2 p-2 rounded" style={{ border: '1px solid #f0e8df' }}>
                                     <Image
                                         src={getImageUrl(item.image)}
                                         width={52}
@@ -234,9 +234,9 @@ function OrderManagement() {
                                         style={{ objectFit: 'cover', borderRadius: 8, flexShrink: 0 }}
                                         fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
                                     />
-                                    <div className="flex-grow-1">
+                                    <div className="flex-1">
                                         <div style={{ fontWeight: 500, fontSize: '0.9rem' }}>{item.name}</div>
-                                        <div className="text-muted" style={{ fontSize: '0.82rem' }}>
+                                        <div className="text-gray-500" style={{ fontSize: '0.82rem' }}>
                                             {formatPrice(item.price)} × {item.quantity}
                                         </div>
                                     </div>
@@ -249,15 +249,15 @@ function OrderManagement() {
 
                         {/* Price breakdown */}
                         <div className="p-3 rounded" style={{ background: '#f9f3ec', borderTop: '1px solid #e8ddd5' }}>
-                            <div className="d-flex justify-content-between mb-1 text-muted" style={{ fontSize: '0.88rem' }}>
+                            <div className="flex justify-between mb-1 text-gray-500" style={{ fontSize: '0.88rem' }}>
                                 <span>Tạm tính</span>
                                 <span>{formatPrice((selectedOrder.totalAmount || 0) - (selectedOrder.shippingFee || 0))}</span>
                             </div>
-                            <div className="d-flex justify-content-between mb-2 text-muted" style={{ fontSize: '0.88rem' }}>
+                            <div className="flex justify-between mb-2 text-gray-500" style={{ fontSize: '0.88rem' }}>
                                 <span>Phí vận chuyển</span>
                                 <span>{selectedOrder.shippingFee > 0 ? formatPrice(selectedOrder.shippingFee) : <span style={{ color: '#52c41a' }}>Miễn phí</span>}</span>
                             </div>
-                            <div className="d-flex justify-content-between fw-bold">
+                            <div className="flex justify-between font-bold">
                                 <span>Tổng cộng</span>
                                 <span style={{ color: '#ff6b35', fontSize: '1.05rem' }}>{formatPrice(selectedOrder.totalAmount)}</span>
                             </div>

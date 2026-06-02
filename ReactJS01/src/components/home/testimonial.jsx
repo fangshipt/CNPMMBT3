@@ -62,7 +62,7 @@ function Testimonial() {
         <div className="container my-5 py-5">
           <div className="section-header text-center mb-5">
             <p className="secondary-font text-primary text-uppercase mb-2">Khách hàng chia sẻ</p>
-            <h2 className="display-4 fw-normal mb-3">Những lời nhắn nhỏ từ người nuôi thú cưng</h2>
+            <h2 className="display-4 font-normal mb-3">Những lời nhắn nhỏ từ người nuôi thú cưng</h2>
             <p className="testimonial-intro secondary-font mx-auto">
               Tụi mình luôn muốn mỗi đơn hàng đến tay bạn thật gọn gàng, dễ chọn và hợp với thói quen chăm sóc các bé ở Việt Nam.
             </p>
@@ -71,7 +71,7 @@ function Testimonial() {
           <div className="row g-4">
             {displayReviews.map((review) => (
               <div className="col-md-4" key={review._id}>
-                <article className="testimonial-card h-100">
+                <article className="testimonial-card h-full">
                   <div className="testimonial-rating mb-3" aria-label={`${review.rating} sao`}>
                     {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
                   </div>
@@ -106,12 +106,12 @@ function Testimonial() {
       >
         <div className="text-center mb-4">
           <iconify-icon icon="ph:paw-print" style={{ fontSize: '2.5rem', color: '#DEAD6F' }}></iconify-icon>
-          <h5 className="fw-semibold mt-3 mb-1" style={{ color: '#3a2e28' }}>Bạn có muốn gửi lời nhắn?</h5>
-          <p className="text-muted small">Đơn hàng của bạn đã được giao thành công. Hãy chia sẻ trải nghiệm của bạn với chúng tôi!</p>
+          <h5 className="font-semibold mt-3 mb-1" style={{ color: '#3a2e28' }}>Bạn có muốn gửi lời nhắn?</h5>
+          <p className="text-gray-500 small">Đơn hàng của bạn đã được giao thành công. Hãy chia sẻ trải nghiệm của bạn với chúng tôi!</p>
         </div>
 
         <div className="mb-3 text-center">
-          <label className="text-muted small d-block mb-2">Đánh giá trải nghiệm mua sắm</label>
+          <label className="text-gray-500 small block mb-2">Đánh giá trải nghiệm mua sắm</label>
           <Rate value={rating} onChange={setRating} style={{ color: '#f59e0b', fontSize: '1.5rem' }} />
         </div>
 
@@ -126,12 +126,12 @@ function Testimonial() {
           />
         </div>
 
-        <div className="d-flex gap-2">
-          <button className="btn btn-outline-secondary rounded-2 flex-grow-1" onClick={handleDismiss}>
+        <div className="flex gap-2">
+          <button className="btn btn-outline-secondary rounded-2 flex-1" onClick={handleDismiss}>
             Để sau
           </button>
           <button
-            className="btn btn-primary rounded-2 flex-grow-1"
+            className="btn btn-primary rounded-2 flex-1"
             onClick={handleSubmit}
             disabled={submitting}
           >

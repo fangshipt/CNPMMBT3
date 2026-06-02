@@ -39,6 +39,18 @@ const userSchema = new mongoose.Schema(
     },
 
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+
+    // Kích hoạt tài khoản qua OTP
+    isActive: { type: Boolean, default: false },
+
+    // OTP dùng chung cho kích hoạt và quên mật khẩu
+    otp:       { type: String,  default: null },
+    otpExpiry: { type: Date,    default: null },
+    otpType:   { type: String,  enum: ['activate', 'forgot_password'], default: null },
+
+    // Theo dõi đăng nhập sai để khoá tài khoản
+    loginAttempts: { type: Number, default: 0 },
+    lockUntil:     { type: Date,   default: null },
   },
   {
     timestamps: true,

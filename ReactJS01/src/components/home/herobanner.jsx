@@ -48,33 +48,22 @@ function HeroBanner() {
                 key={index}
                 aria-hidden={activeSlide !== index}
               >
-                <div className="row banner-content align-items-center">
+                <div className="row banner-content items-center">
                   <div className="img-wrapper col-md-5">
                     <img src={slide.image} alt="Banner thú cưng" className="img-fluid" />
                   </div>
 
                   <div className="content-wrapper col-md-7 p-5 mb-5">
-                    <div
-                      className="secondary-font text-primary text-uppercase mb-3"
-                      style={{ fontSize: "0.85rem", letterSpacing: "2px" }}
-                    >
+                    <div className="secondary-font text-primary uppercase mb-4 text-sm tracking-widest">
                       {slide.tag}
                     </div>
 
-                    <h2 className="banner-title display-1 fw-normal mb-3">
+                    <h2 className="banner-title display-1 font-normal mb-3">
                       {slide.title}{" "}
                       <span className="text-primary">{slide.highlight}</span>
                     </h2>
 
-                    <p
-                      style={{
-                        color: "#6b5a4e",
-                        fontSize: "1rem",
-                        lineHeight: 1.7,
-                        maxWidth: 420,
-                        marginTop: 8,
-                      }}
-                    >
+                    <p className="mt-2 text-base leading-[1.7] max-w-[420px]" style={{ color: "#6b5a4e" }}>
                       {slide.desc}
                     </p>
                   </div>
@@ -103,3 +92,4 @@ function HeroBanner() {
 }
 
 export default HeroBanner;
+

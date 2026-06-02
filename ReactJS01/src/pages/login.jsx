@@ -1,4 +1,5 @@
-import { useContext } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
 import {
     Button,
@@ -13,42 +14,54 @@ import {
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { AuthContext } from '../components/context/authContext';
+import { loginSuccess } from '../store/authSlice';
 import { loginApi } from '../util/api';
 
 const LoginPage = () => {
-    const navigate = useNavigate();
-    const { setAuth } = useContext(AuthContext);
+    const navigate  = useNavigate();
+    const dispatch  = useDispatch();
+    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
+    // Nếu đã đăng nhập thì chuyển hướng ngay
+    useEffect(() => {
+        if (isAuthenticated) navigate('/', { replace: true });
+    }, [isAuthenticated, navigate]);
 
     const onFinish = async (values) => {
         const { email, password } = values;
         const res = await loginApi(email, password);
 
         if (res && res.EC === 0) {
-            localStorage.setItem("access_token", res.access_token);
-            localStorage.setItem("email", res?.user?.email ?? "");
-            localStorage.setItem("name", res?.user?.fullName ?? "");
-            localStorage.setItem("role", res?.user?.role ?? "");
+            const userData = {
+                email:    res?.user?.email    ?? '',
+                name:     res?.user?.fullName ?? '',
+                fullName: res?.user?.fullName ?? '',
+                role:     res?.user?.role     ?? '',
+                avatar:   res?.user?.avatar   ?? '',
+            };
+
+            // Lưu localStorage để giữ session khi reload
+            localStorage.setItem('access_token', res.access_token);
+            localStorage.setItem('email',  userData.email);
+            localStorage.setItem('name',   userData.fullName);
+            localStorage.setItem('role',   userData.role);
+            localStorage.setItem('avatar', userData.avatar);
+
+            // Dispatch Redux action
+            dispatch(loginSuccess(userData));
 
             notification.success({
-                message: "Đăng nhập thành công",
-                description: "Chào mừng bạn quay lại."
+                message: 'Đăng nhập thành công',
+                description: 'Chào mừng bạn quay lại.',
             });
 
-            setAuth({
-                isAuthenticated: true,
-                user: {
-                    email: res?.user?.email ?? "",
-                    name: res?.user?.fullName ?? "",
-                    role: res?.user?.role ?? "",
-                }
-            });
-
-            navigate("/");
+            // Redirect theo role
+            if (userData.role === 'admin') navigate('/admin/profile');
+            else navigate('/customer/profile');
         } else {
             notification.error({
-                message: "Chưa đăng nhập được",
-                description: res?.EM ?? "Email hoặc mật khẩu chưa đúng."
+                message: 'Chưa đăng nhập được',
+                description: res?.EM ?? 'Email hoặc mật khẩu chưa đúng.',
             });
         }
     };
@@ -94,6 +107,10 @@ const LoginPage = () => {
                         >
                             <Input.Password placeholder="Mật khẩu" />
                         </Form.Item>
+
+                        <div style={{ textAlign: 'right', marginTop: -12, marginBottom: 16 }}>
+                            <Link to="/forgot-password">Quên mật khẩu?</Link>
+                        </div>
 
                         <Form.Item>
                             <Button type="primary" htmlType="submit" block>

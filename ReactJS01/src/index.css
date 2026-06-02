@@ -1,3 +1,5 @@
+@import "tailwindcss" layer(utilities);
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -108,4 +110,77 @@ code {
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
+}
+
+/* ── Site Header ── */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #fff;
+  box-shadow: 0 1px 8px rgba(58,46,40,0.08);
+}
+
+.site-header .site-menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: none !important;
+  padding: 0 24px;
+  line-height: 56px !important;
+  height: 56px;
+}
+
+/* Nav items uniform font size */
+.site-header .site-menu .ant-menu-item,
+.site-header .site-menu .ant-menu-submenu {
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+  color: #3a2e28 !important;
+  padding: 0 18px !important;
+  line-height: 56px !important;
+  height: 56px !important;
+}
+
+.site-header .site-menu .ant-menu-item a,
+.site-header .site-menu .ant-menu-submenu-title {
+  color: #3a2e28 !important;
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+  line-height: 56px !important;
+}
+
+/* Active / hover indicator */
+.site-header .site-menu .ant-menu-item-selected a,
+.site-header .site-menu .ant-menu-item:hover a,
+.site-header .site-menu .ant-menu-submenu-selected > .ant-menu-submenu-title,
+.site-header .site-menu .ant-menu-submenu:hover > .ant-menu-submenu-title {
+  color: #ff6b35 !important;
+}
+
+.site-header .site-menu .ant-menu-item-selected::after,
+.site-header .site-menu .ant-menu-item:hover::after,
+.site-header .site-menu .ant-menu-submenu-selected::after,
+.site-header .site-menu .ant-menu-submenu:hover::after {
+  border-bottom-color: #ff6b35 !important;
+}
+
+/* Cart icon and account icon sizing */
+.site-header .site-menu .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.site-header .site-menu .header-actions .anticon {
+  font-size: 1.25rem !important;
+  color: #3a2e28;
+}
+
+/* Account item flex row */
+.site-header .site-menu .ant-menu-item .flex {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1;
 }

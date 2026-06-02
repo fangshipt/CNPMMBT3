@@ -19,7 +19,7 @@ function Categories() {
             <Link
               key={cat._id}
               to={`/products?category=${cat._id}`}
-              className="categories-item text-decoration-none d-flex flex-column align-items-center"
+              className="categories-item no-underline flex flex-col items-center"
             >
               <div className="category-img-wrapper">
                 {cat.image && (

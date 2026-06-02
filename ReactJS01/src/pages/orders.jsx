@@ -44,9 +44,9 @@ function OrdersPage() {
     return (
         <div style={{ background: '#F9F3EC', minHeight: '100vh' }}>
             <div className="container py-5">
-                <div className="d-flex flex-wrap gap-3 justify-content-between align-items-center mb-4">
-                    <h2 className="fw-normal m-0" style={{ color: '#3a2e28' }}>
-                        <iconify-icon icon="ph:package" class="me-2"></iconify-icon>
+                <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
+                    <h2 className="font-normal m-0" style={{ color: '#3a2e28' }}>
+                        <iconify-icon icon="ph:package" class="mr-2"></iconify-icon>
                         Đơn hàng của tôi
                     </h2>
                     <Select
@@ -71,26 +71,26 @@ function OrdersPage() {
                             const cfg = STATUS_CONFIG[order.status] || { label: order.status, color: 'default' };
                             return (
                                 <div key={order._id} className="bg-white rounded-4 shadow-sm p-4 mb-3">
-                                    <div className="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                                    <div className="flex flex-wrap justify-between items-center mb-3">
                                         <div>
-                                            <span className="text-muted small me-3">{order.orderCode || '#' + order._id.slice(-8).toUpperCase()}</span>
-                                            <span className="text-muted small">{formatDate(order.createdAt)}</span>
+                                            <span className="text-gray-500 small mr-4">{order.orderCode || '#' + order._id.slice(-8).toUpperCase()}</span>
+                                            <span className="text-gray-500 small">{formatDate(order.createdAt)}</span>
                                         </div>
                                         <Tag color={cfg.color} style={{ fontSize: '0.85rem', padding: '2px 12px' }}>{cfg.label}</Tag>
                                     </div>
 
-                                    <div className="d-flex flex-wrap gap-3 mb-3">
+                                    <div className="flex flex-wrap gap-3 mb-3">
                                         {order.items.slice(0, 3).map((item, idx) => (
-                                            <div key={idx} className="d-flex align-items-center gap-2">
-                                                <div className="text-muted small">{item.name} x{item.quantity}</div>
+                                            <div key={idx} className="flex items-center gap-2">
+                                                <div className="text-gray-500 small">{item.name} x{item.quantity}</div>
                                             </div>
                                         ))}
-                                        {order.items.length > 3 && <span className="text-muted small">+{order.items.length - 3} sản phẩm khác</span>}
+                                        {order.items.length > 3 && <span className="text-gray-500 small">+{order.items.length - 3} sản phẩm khác</span>}
                                     </div>
 
-                                    <div className="d-flex justify-content-between align-items-center">
+                                    <div className="flex justify-between items-center">
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                                            <span className="text-muted small">Tổng tiền: </span>
+                                            <span className="text-gray-500 small">Tổng tiền: </span>
                                             <strong className="text-primary">{formatPrice(order.totalAmount)}</strong>
                                             {order.paymentMethod === 'VNPAY'
                                                 ? <Tag color="blue" style={{ margin: 0, fontSize: '0.75rem' }}>VNPay</Tag>
@@ -104,7 +104,7 @@ function OrdersPage() {
                                 </div>
                             );
                         })}
-                        <Pagination current={page} total={total} pageSize={10} onChange={setPage} className="mt-4 d-flex justify-content-center" />
+                        <Pagination current={page} total={total} pageSize={10} onChange={setPage} className="mt-4 flex justify-center" />
                     </>
                 )}
             </div>

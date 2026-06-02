@@ -9,7 +9,7 @@ import BlogSection from '../components/home/blogSection';
 
 function HomePage() {
   return (
-    <div style={{ background: '#f9f3ec' }}>
+    <div className="bg-[#f9f3ec]">
       <HeroBanner />
       <Categories />
       <NewestProduct />

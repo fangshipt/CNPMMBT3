@@ -49,7 +49,7 @@ function MiniProductCard({ product }) {
       )}
 
       {/* Image */}
-      <Link to={`/products/${product.slug || product._id}`} className="d-block overflow-hidden" style={{ aspectRatio: "1" }}>
+      <Link to={`/products/${product.slug || product._id}`} className="no-underline" style={{ display: "block", overflow: "hidden", aspectRatio: "1" }}>
         <img
           src={getImageUrl(product.images?.[0])}
           alt={product.name}
@@ -67,7 +67,7 @@ function MiniProductCard({ product }) {
             {product.category.name}
           </div>
         )}
-        <Link to={`/products/${product.slug || product._id}`} className="text-decoration-none">
+        <Link to={`/products/${product.slug || product._id}`} className="no-underline">
           <div
             style={{
               fontSize: "0.82rem", color: "#3a2e28", fontWeight: 500, lineHeight: 1.35,
@@ -79,7 +79,7 @@ function MiniProductCard({ product }) {
           </div>
         </Link>
 
-        <div className="d-flex align-items-baseline gap-1">
+        <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
           <span style={{ fontSize: "0.9rem", color: "#ff6b35", fontWeight: 700 }}>{formatPrice(displayPrice)}</span>
           {hasDiscount && (
             <span style={{ fontSize: "0.72rem", color: "#aaa", textDecoration: "line-through" }}>{formatPrice(product.price)}</span>
@@ -141,7 +141,7 @@ function TopProductsSection() {
       }}
     >
       {/* Header: tabs + navigation */}
-      <div className="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 16 }}>
         {/* Tabs */}
         <div style={{ display: "flex", gap: 8 }}>
           {TABS.map((tab) => (
@@ -231,9 +231,9 @@ function TopProductsSection() {
 
       {/* Product grid */}
       {loading ? (
-        <div className="d-flex justify-content-center py-4">
-          <div className="spinner-border spinner-border-sm text-primary" role="status" />
-          <span className="ms-2 text-muted small">Đang tải...</span>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "16px 0", gap: 8 }}>
+          <div className="spinner-border spinner-border-sm" style={{ color: "#c8a87a" }} role="status" />
+          <span style={{ fontSize: "0.85rem", color: "#8a7060" }}>Đang tải...</span>
         </div>
       ) : (
         <div

@@ -7,8 +7,8 @@ function ProductSwiper({ images = [] }) {
   if (!images.length) {
     return (
       <div
-        className="bg-light rounded-4 d-flex align-items-center justify-content-center"
-        style={{ aspectRatio: "1", width: "100%" }}
+        className="bg-gray-100 rounded-2xl flex items-center justify-center w-full"
+        style={{ aspectRatio: "1" }}
       >
         <iconify-icon icon="ph:image" style={{ fontSize: "4rem", color: "#ccc" }}></iconify-icon>
       </div>
@@ -21,18 +21,18 @@ function ProductSwiper({ images = [] }) {
   return (
     <div>
       {/* Main image */}
-      <div className="position-relative mb-3" style={{ overflow: "hidden", borderRadius: "1rem" }}>
+      <div className="relative mb-3 overflow-hidden rounded-2xl">
         <img
           src={getImageUrl(images[activeIndex])}
           alt={`Ảnh ${activeIndex + 1}`}
-          className="img-fluid w-100"
+          className="img-fluid w-full"
           style={{ aspectRatio: "1", objectFit: "cover", transition: "opacity 0.2s" }}
         />
 
         {images.length > 1 && (
           <>
             <button
-              className="btn btn-light position-absolute top-50 start-0 translate-middle-y ms-2 rounded-circle shadow-sm"
+              className="btn btn-light absolute top-1/2 left-0 -translate-y-1/2 ml-2 rounded-full shadow-sm"
               style={{ width: "36px", height: "36px", padding: 0 }}
               onClick={prev}
               type="button"
@@ -41,7 +41,7 @@ function ProductSwiper({ images = [] }) {
               ‹
             </button>
             <button
-              className="btn btn-light position-absolute top-50 end-0 translate-middle-y me-2 rounded-circle shadow-sm"
+              className="btn btn-light absolute top-1/2 right-0 -translate-y-1/2 mr-2 rounded-full shadow-sm"
               style={{ width: "36px", height: "36px", padding: 0 }}
               onClick={next}
               type="button"
@@ -51,7 +51,7 @@ function ProductSwiper({ images = [] }) {
             </button>
 
             {/* Dots */}
-            <div className="position-absolute bottom-0 start-50 translate-middle-x mb-2 d-flex gap-1">
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 mb-2 flex gap-1">
               {images.map((_, i) => (
                 <button
                   key={i}
@@ -74,7 +74,7 @@ function ProductSwiper({ images = [] }) {
 
       {/* Thumbnails */}
       {images.length > 1 && (
-        <div className="d-flex gap-2 flex-wrap">
+        <div className="flex gap-2 flex-wrap">
           {images.map((img, i) => (
             <button
               key={i}
@@ -102,3 +102,4 @@ function ProductSwiper({ images = [] }) {
 }
 
 export default ProductSwiper;
+

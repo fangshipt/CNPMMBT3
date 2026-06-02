@@ -48,15 +48,16 @@ function PaymentResultPage() {
     const cfg = config[status];
 
     return (
-        <div style={{ background: '#F9F3EC', minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div className="text-center" style={{ maxWidth: 440, padding: '40px 24px', background: '#fff', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
+        <div className="bg-[#F9F3EC] min-h-[80vh] flex items-center justify-center">
+            <div className="text-center max-w-[440px] px-6 py-10 bg-white rounded-[20px]" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
                 <iconify-icon
                     icon={cfg.icon}
-                    style={{ fontSize: '4rem', color: cfg.color, display: 'block', marginBottom: 16 }}
+                    className="block mb-4"
+                    style={{ fontSize: '4rem', color: cfg.color }}
                 ></iconify-icon>
-                <h3 style={{ color: '#3a2e28', fontWeight: 700, marginBottom: 8 }}>{cfg.title}</h3>
-                <p className="text-muted" style={{ marginBottom: 28 }}>{cfg.desc}</p>
-                <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <h3 className="font-bold mb-2" style={{ color: '#3a2e28' }}>{cfg.title}</h3>
+                <p className="text-gray-500 mb-7">{cfg.desc}</p>
+                <div className="flex gap-3 justify-center flex-wrap">
                     <Link to="/orders">
                         <Button type="primary" size="large">Xem đơn hàng của tôi</Button>
                     </Link>

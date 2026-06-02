@@ -27,7 +27,7 @@ function RevenueManagement() {
 
     return (
         <div>
-            <div className="d-flex justify-content-between align-items-center mb-4">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
                 <div>
                     <h4 className="mb-0" style={{ color: '#3a2e28', fontWeight: 700 }}>Quản lý doanh thu</h4>
                     <small style={{ color: '#8a7060' }}>Thống kê đơn hàng đã giao thành công</small>
@@ -73,46 +73,51 @@ function RevenueManagement() {
                     </div>
 
                     {/* Bar chart */}
-                    <div style={{ background: '#fff', borderRadius: 14, padding: '24px', boxShadow: '0 1px 6px rgba(0,0,0,0.07)' }}>
-                        <h6 style={{ color: '#3a2e28', fontWeight: 600, marginBottom: 20 }}>Doanh thu theo tháng — {year}</h6>
-                        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10, height: 220, paddingBottom: 8 }}>
-                            {data.monthly.map(m => {
-                                const heightPct = maxRevenue > 0 ? (m.revenue / maxRevenue) * 100 : 0;
-                                const isCurrentMonth = m.month === new Date().getMonth() + 1 && year === currentYear;
-                                return (
-                                    <div key={m.month} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                                        {m.revenue > 0 && (
-                                            <div style={{ fontSize: '0.62rem', color: '#8a7060', textAlign: 'center', lineHeight: 1.2 }}>
-                                                {(m.revenue / 1e6).toFixed(1)}M
+                    {(() => {
+                        const BAR_AREA = 200;
+                        return (
+                        <div style={{ background: '#fff', borderRadius: 14, padding: '24px', boxShadow: '0 1px 6px rgba(0,0,0,0.07)' }}>
+                            <h6 style={{ color: '#3a2e28', fontWeight: 600, marginBottom: 16 }}>Doanh thu theo tháng — {year}</h6>
+                            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8 }}>
+                                {data.monthly.map(m => {
+                                    const barH = maxRevenue > 0
+                                        ? Math.max(Math.round((m.revenue / maxRevenue) * BAR_AREA), m.revenue > 0 ? 6 : 0)
+                                        : 0;
+                                    const isCurrentMonth = m.month === new Date().getMonth() + 1 && year === currentYear;
+                                    return (
+                                        <div key={m.month} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                                            <div style={{ height: 18, display: 'flex', alignItems: 'flex-end' }}>
+                                                {m.revenue > 0 && (
+                                                    <span style={{ fontSize: '0.62rem', color: '#8a7060', lineHeight: 1, whiteSpace: 'nowrap' }}>
+                                                        {(m.revenue / 1e6).toFixed(1)}M
+                                                    </span>
+                                                )}
                                             </div>
-                                        )}
-                                        <div style={{ flex: 1, width: '100%', display: 'flex', alignItems: 'flex-end' }}>
                                             <div
+                                                title={`${MONTH_LABELS[m.month - 1]}: ${formatPrice(m.revenue)} (${m.orders} đơn)`}
                                                 style={{
-                                                    width: '100%',
-                                                    height: `${Math.max(heightPct, m.revenue > 0 ? 4 : 0)}%`,
+                                                    width: '70%',
+                                                    height: barH || 4,
                                                     background: isCurrentMonth
                                                         ? 'linear-gradient(to top, #ff6b35, #ffaa80)'
                                                         : m.revenue > 0
-                                                            ? 'linear-gradient(to top, #DEAD6F, #f0d090)'
+                                                            ? 'linear-gradient(to top, #c8962a, #f0d090)'
                                                             : '#f0e8df',
-                                                    borderRadius: '6px 6px 0 0',
-                                                    minHeight: 4,
+                                                    borderRadius: '5px 5px 0 0',
                                                     transition: 'height 0.4s ease',
-                                                    cursor: 'default',
-                                                    position: 'relative',
+                                                    opacity: m.revenue > 0 ? 1 : 0.4,
                                                 }}
-                                                title={`${MONTH_LABELS[m.month - 1]}: ${formatPrice(m.revenue)} (${m.orders} đơn)`}
                                             />
+                                            <div style={{ fontSize: '0.73rem', color: isCurrentMonth ? '#ff6b35' : '#5a4a3f', fontWeight: isCurrentMonth ? 700 : 400, marginTop: 4 }}>
+                                                {MONTH_LABELS[m.month - 1]}
+                                            </div>
                                         </div>
-                                        <div style={{ fontSize: '0.75rem', color: isCurrentMonth ? '#ff6b35' : '#5a4a3f', fontWeight: isCurrentMonth ? 700 : 400 }}>
-                                            {MONTH_LABELS[m.month - 1]}
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                                    );
+                                })}
+                            </div>
                         </div>
-                    </div>
+                        );
+                    })()}
 
                     {/* Monthly table */}
                     <div style={{ background: '#fff', borderRadius: 14, padding: '16px 24px', boxShadow: '0 1px 6px rgba(0,0,0,0.07)', marginTop: 16 }}>

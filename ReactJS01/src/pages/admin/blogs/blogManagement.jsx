@@ -100,15 +100,15 @@ function BlogManagement() {
             dataIndex: 'title',
             render: (title, r) => (
                 <div>
-                    <div className="fw-semibold">{title}</div>
-                    <div className="text-muted small">{r.slug}</div>
+                    <div className="font-semibold">{title}</div>
+                    <div className="text-gray-500 small">{r.slug}</div>
                 </div>
             ),
         },
         {
             title: 'Mô tả ngắn',
             dataIndex: 'excerpt',
-            render: (t) => <span className="text-muted small">{t?.slice(0, 80)}{t?.length > 80 ? '...' : ''}</span>,
+            render: (t) => <span className="text-gray-500 small">{t?.slice(0, 80)}{t?.length > 80 ? '...' : ''}</span>,
         },
         {
             title: 'Trạng thái',
@@ -116,7 +116,7 @@ function BlogManagement() {
             render: (v, r) => (
                 <div>
                     <Tag color={v ? 'green' : 'default'}>{v ? 'Đã đăng' : 'Nháp'}</Tag>
-                    {v && r.publishedAt && <div className="text-muted small">{new Date(r.publishedAt).toLocaleDateString('vi-VN')}</div>}
+                    {v && r.publishedAt && <div className="text-gray-500 small">{new Date(r.publishedAt).toLocaleDateString('vi-VN')}</div>}
                 </div>
             ),
             width: 120,
@@ -137,7 +137,7 @@ function BlogManagement() {
 
     return (
         <div>
-            <div className="d-flex justify-content-between align-items-center mb-4">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
                 <h4 style={{ color: '#3a2e28', fontWeight: 600 }}>Quản lý bài viết</h4>
                 <Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>Tạo bài viết</Button>
             </div>
@@ -181,7 +181,7 @@ function BlogManagement() {
                     </Form.Item>
 
                     <Form.Item label="Ảnh bìa">
-                        <div className="d-flex gap-3 align-items-start">
+                        <div className="flex gap-3 items-start">
                             {previewImage && (
                                 <img src={previewImage} alt="preview" style={{ width: 120, height: 80, objectFit: 'cover', borderRadius: 8 }} />
                             )}
@@ -207,7 +207,7 @@ function BlogManagement() {
                         <Switch checkedChildren="Đã đăng" unCheckedChildren="Nháp" />
                     </Form.Item>
 
-                    <div className="d-flex gap-2 justify-content-end">
+                    <div className="flex gap-2 justify-end">
                         <Button onClick={() => setModalOpen(false)}>Hủy</Button>
                         <Button type="primary" htmlType="submit" loading={saving}>Lưu bài viết</Button>
                     </div>

@@ -73,10 +73,8 @@ function CheckoutPage() {
                   selectedAddress?.province?.toLowerCase().includes('ho chi minh');
     const baseShippingFee = selectedAddress ? (isHCM ? 10000 : 30000) : 0;
     const cartProductIds = items.map(item => (item.product?._id || item.product)?.toString());
-    const cartHasFreeship = hasFreeship && (
-        freeshipProductIds.size === 0 ||
-        cartProductIds.some(id => freeshipProductIds.has(id))
-    );
+    const cartHasFreeship = hasFreeship && freeshipProductIds.size > 0 &&
+        cartProductIds.some(id => freeshipProductIds.has(id));
     const shippingFee = cartHasFreeship ? 0 : baseShippingFee;
     const orderTotal = cartTotal + shippingFee;
 
@@ -101,8 +99,8 @@ function CheckoutPage() {
     return (
         <div style={{ background: '#F9F3EC', minHeight: '100vh' }}>
             <div className="container py-5">
-                <h2 className="mb-4 fw-normal" style={{ color: '#3a2e28' }}>
-                    <iconify-icon icon="ph:credit-card" class="me-2"></iconify-icon>
+                <h2 className="mb-4 font-normal" style={{ color: '#3a2e28' }}>
+                    <iconify-icon icon="ph:credit-card" class="mr-2"></iconify-icon>
                     Thanh toán
                 </h2>
 
@@ -110,9 +108,9 @@ function CheckoutPage() {
                     <div className="col-lg-7">
                         {/* Địa chỉ giao hàng */}
                         <div className="bg-white rounded-4 shadow-sm p-4 mb-4">
-                            <div className="d-flex justify-content-between align-items-center mb-3">
-                                <h5 className="fw-semibold m-0" style={{ color: '#3a2e28' }}>
-                                    <iconify-icon icon="ph:map-pin" class="me-2"></iconify-icon>
+                            <div className="flex justify-between items-center mb-3">
+                                <h5 className="font-semibold m-0" style={{ color: '#3a2e28' }}>
+                                    <iconify-icon icon="ph:map-pin" class="mr-2"></iconify-icon>
                                     Địa chỉ giao hàng
                                 </h5>
                                 <Link to="/addresses">
@@ -122,7 +120,7 @@ function CheckoutPage() {
 
                             {addresses.length === 0 ? (
                                 <div className="text-center py-3">
-                                    <p className="text-muted mb-2">Bạn chưa có địa chỉ nào.</p>
+                                    <p className="text-gray-500 mb-2">Bạn chưa có địa chỉ nào.</p>
                                     <Link to="/addresses"><Button type="primary" icon={<PlusOutlined />}>Thêm địa chỉ ngay</Button></Link>
                                 </div>
                             ) : (
@@ -176,8 +174,8 @@ function CheckoutPage() {
 
                         {/* Phương thức thanh toán */}
                         <div className="bg-white rounded-4 shadow-sm p-4">
-                            <h5 className="fw-semibold mb-3" style={{ color: '#3a2e28' }}>
-                                <iconify-icon icon="ph:wallet" class="me-2"></iconify-icon>
+                            <h5 className="font-semibold mb-3" style={{ color: '#3a2e28' }}>
+                                <iconify-icon icon="ph:wallet" class="mr-2"></iconify-icon>
                                 Phương thức thanh toán
                             </h5>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -187,7 +185,7 @@ function CheckoutPage() {
                                         <div
                                             key={pm.id}
                                             onClick={() => setPaymentMethod(pm.id)}
-                                            className="p-3 rounded-3 d-flex align-items-center gap-3"
+                                            className="p-3 rounded-3 flex items-center gap-3"
                                             style={{
                                                 border: isSelected ? '2px solid #ff6b35' : '1.5px solid #e0d5ca',
                                                 background: isSelected ? '#FFF8F0' : '#fff',
@@ -200,8 +198,8 @@ function CheckoutPage() {
                                                 : <div style={{ width: 20, height: 20, borderRadius: '50%', border: '2px solid #ccc', flexShrink: 0 }} />
                                             }
                                             <div>
-                                                <div className="fw-semibold" style={{ fontSize: '0.95rem' }}>{pm.title}</div>
-                                                <div className="text-muted small">{pm.description}</div>
+                                                <div className="font-semibold" style={{ fontSize: '0.95rem' }}>{pm.title}</div>
+                                                <div className="text-gray-500 small">{pm.description}</div>
                                             </div>
                                         </div>
                                     );
@@ -212,48 +210,48 @@ function CheckoutPage() {
 
                     <div className="col-lg-5">
                         <div className="bg-white rounded-4 shadow-sm p-4">
-                            <h5 className="fw-semibold mb-3" style={{ color: '#3a2e28' }}>Đơn hàng ({items.length} sản phẩm)</h5>
+                            <h5 className="font-semibold mb-3" style={{ color: '#3a2e28' }}>Đơn hàng ({items.length} sản phẩm)</h5>
                             {items.map(item => {
                                 const productId = item.product?._id || item.product;
                                 return (
-                                    <div key={productId} className="d-flex align-items-center gap-3 mb-3">
+                                    <div key={productId} className="flex items-center gap-3 mb-3">
                                         <img src={item.image ? getImageUrl(item.image) : '/assets/placeholder.png'} alt={item.name}
                                             style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }} />
-                                        <div className="flex-grow-1">
-                                            <div className="small fw-semibold" style={{ color: '#3a2e28' }}>{item.name}</div>
-                                            <div className="text-muted small">x{item.quantity}</div>
+                                        <div className="flex-1">
+                                            <div className="small font-semibold" style={{ color: '#3a2e28' }}>{item.name}</div>
+                                            <div className="text-gray-500 small">x{item.quantity}</div>
                                         </div>
-                                        <div className="fw-bold text-primary small">{formatPrice(item.price * item.quantity)}</div>
+                                        <div className="font-bold text-primary small">{formatPrice(item.price * item.quantity)}</div>
                                     </div>
                                 );
                             })}
                             <hr />
-                            <div className="d-flex justify-content-between mb-2">
-                                <span className="text-muted">Tạm tính</span><span>{formatPrice(cartTotal)}</span>
+                            <div className="flex justify-between mb-2">
+                                <span className="text-gray-500">Tạm tính</span><span>{formatPrice(cartTotal)}</span>
                             </div>
-                            <div className="d-flex justify-content-between mb-3">
-                                <span className="text-muted">Phí vận chuyển</span>
+                            <div className="flex justify-between mb-3">
+                                <span className="text-gray-500">Phí vận chuyển</span>
                                 <span>
                                     {cartHasFreeship ? (
                                         <span>
-                                            <span className="text-decoration-line-through text-muted me-1" style={{ fontSize: '0.82rem' }}>
+                                            <span className="text-decoration-line-through text-gray-500 mr-1" style={{ fontSize: '0.82rem' }}>
                                                 {selectedAddress ? formatPrice(baseShippingFee) : ''}
                                             </span>
-                                            <span className="fw-semibold" style={{ color: '#16a34a' }}>Miễn phí 🚚</span>
+                                            <span className="font-semibold" style={{ color: '#16a34a' }}>Miễn phí 🚚</span>
                                         </span>
                                     ) : selectedAddress ? (
-                                        <span>{formatPrice(shippingFee)} <small className="text-muted">({isHCM ? 'Nội thành HCM' : 'Ngoại thành'})</small></span>
+                                        <span>{formatPrice(shippingFee)} <small className="text-gray-500">({isHCM ? 'Nội thành HCM' : 'Ngoại thành'})</small></span>
                                     ) : (
-                                        <span className="text-muted small">Chọn địa chỉ để tính phí</span>
+                                        <span className="text-gray-500 small">Chọn địa chỉ để tính phí</span>
                                     )}
                                 </span>
                             </div>
-                            <div className="d-flex justify-content-between mb-4">
+                            <div className="flex justify-between mb-4">
                                 <strong>Tổng thanh toán</strong>
                                 <strong className="text-primary fs-5">{formatPrice(orderTotal)}</strong>
                             </div>
                             <Button type="primary" block size="large" onClick={handlePlaceOrder} loading={placing} disabled={!selectedAddressId}>
-                                <iconify-icon icon={paymentMethod === 'VNPAY' ? 'ph:credit-card' : 'ph:check-circle'} class="me-2"></iconify-icon>
+                                <iconify-icon icon={paymentMethod === 'VNPAY' ? 'ph:credit-card' : 'ph:check-circle'} class="mr-2"></iconify-icon>
                                 {paymentMethod === 'VNPAY' ? 'Thanh toán qua PayOS' : 'Đặt hàng'}
                             </Button>
                             <Link to="/cart"><Button block className="mt-2">Quay lại giỏ hàng</Button></Link>

@@ -81,7 +81,7 @@ function ProductDetailPage() {
       <div style={{ background: "#F9F3EC", minHeight: "100vh" }} className="py-5">
         <div className="container text-center">
           <iconify-icon icon="ph:warning-circle" style={{ fontSize: "3rem", color: "#ccc" }}></iconify-icon>
-          <p className="mt-3 text-muted">Không tìm thấy sản phẩm.</p>
+          <p className="mt-3 text-gray-500">Không tìm thấy sản phẩm.</p>
           <Link to="/products" className="btn btn-primary">Quay lại danh sách</Link>
         </div>
       </div>
@@ -148,14 +148,14 @@ function ProductDetailPage() {
             {/* Info */}
             <div className="col-md-7">
               {/* Category + badges */}
-              <div className="mb-2 d-flex flex-wrap gap-2 align-items-center">
+              <div className="mb-2 flex flex-wrap gap-2 items-center">
                 {product.category && (
                   <Link
                     to={`/products?category=${product.category._id}`}
-                    className="badge text-decoration-none"
+                    className="badge no-underline"
                     style={{ background: "#f0e8df", color: "#a0856e", fontSize: "0.82rem", fontWeight: 500 }}
                   >
-                    <iconify-icon icon="ph:tag" class="me-1"></iconify-icon>
+                    <iconify-icon icon="ph:tag" class="mr-1"></iconify-icon>
                     {product.category.name}
                   </Link>
                 )}
@@ -181,8 +181,8 @@ function ProductDetailPage() {
               <h1 className="h2 mb-3" style={{ fontWeight: 400, color: "#3a2e28" }}>{product.name}</h1>
 
               {/* Rating + sold */}
-              <div className="d-flex align-items-center gap-3 mb-3 pb-3" style={{ borderBottom: "1px solid #f0e8df" }}>
-                <div className="d-flex align-items-center gap-1">
+              <div className="flex items-center gap-3 mb-3 pb-3" style={{ borderBottom: "1px solid #f0e8df" }}>
+                <div className="flex items-center gap-1">
                   {[1, 2, 3, 4, 5].map((s) => (
                     <iconify-icon
                       key={s}
@@ -191,23 +191,23 @@ function ProductDetailPage() {
                       style={{ fontSize: "1rem" }}
                     ></iconify-icon>
                   ))}
-                  <span className="text-muted ms-1 small">({product.rating}/5)</span>
+                  <span className="text-gray-500 ml-1 small">({product.rating}/5)</span>
                 </div>
-                <span className="text-muted small">
-                  <iconify-icon icon="ph:shopping-bag" class="me-1"></iconify-icon>
+                <span className="text-gray-500 small">
+                  <iconify-icon icon="ph:shopping-bag" class="mr-1"></iconify-icon>
                   Đã bán: <strong>{product.sold}</strong>
                 </span>
               </div>
 
               {/* Price */}
               <div className="mb-4 p-3 rounded-3" style={{ background: "#FFF8F0" }}>
-                <div className="d-flex align-items-center gap-3">
+                <div className="flex items-center gap-3">
                   <span className="secondary-font text-primary" style={{ fontSize: "2rem", fontWeight: 600 }}>
                     {formatPrice(displayPrice)}
                   </span>
                   {hasDiscount && (
                     <>
-                      <span className="text-muted text-decoration-line-through fs-5">
+                      <span className="text-gray-500 text-decoration-line-through fs-5">
                         {formatPrice(product.price)}
                       </span>
                       <span className="badge" style={{ background: "#e74c3c", fontSize: "0.9rem" }}>
@@ -224,20 +224,20 @@ function ProductDetailPage() {
               </div>
 
               {/* Stock + pet type */}
-              <div className="d-flex flex-wrap gap-3 align-items-center mb-4">
+              <div className="flex flex-wrap gap-3 items-center mb-4">
                 {inStock ? (
-                  <div className="d-flex align-items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <span className="badge fs-6 px-3 py-2" style={{ background: "#16a34a", letterSpacing: "0.02em" }}>
-                      <iconify-icon icon="ph:check-circle" class="me-1"></iconify-icon>
+                      <iconify-icon icon="ph:check-circle" class="mr-1"></iconify-icon>
                       Còn hàng
                     </span>
-                    <span className="fw-semibold" style={{ color: "#15803d", fontSize: "0.95rem" }}>
+                    <span className="font-semibold" style={{ color: "#15803d", fontSize: "0.95rem" }}>
                       {product.stock} sản phẩm có sẵn
                     </span>
                   </div>
                 ) : (
                   <span className="badge fs-6 px-3 py-2" style={{ background: "#dc2626", letterSpacing: "0.02em" }}>
-                    <iconify-icon icon="ph:x-circle" class="me-1"></iconify-icon>
+                    <iconify-icon icon="ph:x-circle" class="mr-1"></iconify-icon>
                     Hết hàng
                   </span>
                 )}
@@ -247,18 +247,18 @@ function ProductDetailPage() {
               <div className="mb-4">
                 {inStock && (
                   <div className="mb-3">
-                    <p className="text-muted small mb-2">Số lượng:</p>
+                    <p className="text-gray-500 small mb-2">Số lượng:</p>
                     <QuantityButton quantity={quantity} onChange={setQuantity} min={1} max={product.stock} />
                   </div>
                 )}
-                <div className="d-flex gap-2 align-items-center flex-wrap">
+                <div className="flex gap-2 items-center flex-wrap">
                   <button
                     className={`btn btn-lg rounded-2 px-4 ${addedToCart ? "btn-success" : "btn-outline-primary"}`}
                     onClick={handleAddToCart}
                     disabled={!inStock || addingToCart}
                     style={{ transition: "background 0.3s" }}
                   >
-                    <iconify-icon icon={addedToCart ? "ph:check" : "ph:shopping-cart"} class="me-2"></iconify-icon>
+                    <iconify-icon icon={addedToCart ? "ph:check" : "ph:shopping-cart"} class="mr-2"></iconify-icon>
                     {addingToCart ? "Đang thêm..." : addedToCart ? "Đã thêm!" : "Thêm vào giỏ"}
                   </button>
                   <button
@@ -266,7 +266,7 @@ function ProductDetailPage() {
                     onClick={handleBuyNow}
                     disabled={!inStock}
                   >
-                    <iconify-icon icon="ph:lightning" class="me-2"></iconify-icon>
+                    <iconify-icon icon="ph:lightning" class="mr-2"></iconify-icon>
                     Mua ngay
                   </button>
                   <button
@@ -282,8 +282,8 @@ function ProductDetailPage() {
               {/* Description */}
               {product.description && (
                 <div className="pt-4" style={{ borderTop: "1px solid #f0e8df" }}>
-                  <h6 className="fw-bold mb-2" style={{ color: "#5a4a3f" }}>Mô tả sản phẩm</h6>
-                  <p className="text-muted" style={{ lineHeight: 1.8 }}>{product.description}</p>
+                  <h6 className="font-bold mb-2" style={{ color: "#5a4a3f" }}>Mô tả sản phẩm</h6>
+                  <p className="text-gray-500" style={{ lineHeight: 1.8 }}>{product.description}</p>
                 </div>
               )}
 
@@ -291,14 +291,14 @@ function ProductDetailPage() {
               <div className="pt-3 mt-2" style={{ borderTop: "1px solid #f0e8df" }}>
                 <div className="row g-2 small">
                   <div className="col-6" style={{ color: "#5a4a3f" }}>
-                    <iconify-icon icon="ph:package" class="me-1"></iconify-icon>
+                    <iconify-icon icon="ph:package" class="mr-1"></iconify-icon>
                     Tồn kho:{" "}
                     <strong style={{ color: inStock ? "#15803d" : "#dc2626", fontSize: "1rem" }}>
                       {product.stock}
                     </strong>
                   </div>
-                  <div className="col-6 text-muted">
-                    <iconify-icon icon="ph:chart-line-up" class="me-1"></iconify-icon>
+                  <div className="col-6 text-gray-500">
+                    <iconify-icon icon="ph:chart-line-up" class="mr-1"></iconify-icon>
                     Đã bán: <strong>{product.sold}</strong>
                   </div>
                 </div>
@@ -309,9 +309,9 @@ function ProductDetailPage() {
 
         {/* Reviews */}
         <div className="bg-white rounded-4 shadow-sm p-4 p-md-5 mb-4" id="reviews">
-          <h3 className="fw-normal mb-4" style={{ color: "#3a2e28" }}>
+          <h3 className="font-normal mb-4" style={{ color: "#3a2e28" }}>
             Đánh giá từ khách hàng
-            <span className="ms-2 text-muted" style={{ fontSize: "1rem" }}>({product.reviews?.length || 0})</span>
+            <span className="ml-2 text-gray-500" style={{ fontSize: "1rem" }}>({product.reviews?.length || 0})</span>
           </h3>
 
           {product.reviews && product.reviews.length > 0 ? (
@@ -319,20 +319,20 @@ function ProductDetailPage() {
               {product.reviews.map((r, idx) => (
                 <div key={idx} className="col-12">
                   <article className="p-3 rounded-3" style={{ background: "#FFF8F0" }}>
-                    <div className="d-flex align-items-start gap-3">
+                    <div className="flex items-start gap-3">
                       <img
                         src={r.user?.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
                         alt={r.user?.fullName}
                         className="rounded-circle"
                         style={{ width: 44, height: 44, objectFit: "cover", flexShrink: 0 }}
                       />
-                      <div className="flex-grow-1">
-                        <div className="d-flex align-items-center gap-2 mb-1">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
                           <strong style={{ color: "#3a2e28" }}>{r.user?.fullName || "Khách hàng"}</strong>
-                          <span className="text-muted small">• {new Date(r.createdAt).toLocaleDateString("vi-VN")}</span>
+                          <span className="text-gray-500 small">• {new Date(r.createdAt).toLocaleDateString("vi-VN")}</span>
                         </div>
                         <Rate disabled defaultValue={r.rating} style={{ fontSize: "0.85rem", color: "#f59e0b" }} />
-                        {r.comment && <p className="mb-0 mt-1 text-muted small">{r.comment}</p>}
+                        {r.comment && <p className="mb-0 mt-1 text-gray-500 small">{r.comment}</p>}
                       </div>
                     </div>
                   </article>
@@ -349,14 +349,14 @@ function ProductDetailPage() {
           {/* Review form */}
           <div id="review-form" style={{ borderTop: "1px solid #f0e8df", paddingTop: "1.5rem" }}>
             {!auth.isAuthenticated ? (
-              <p className="text-muted text-center">
+              <p className="text-gray-500 text-center">
                 <Link to="/login">Đăng nhập</Link> để viết đánh giá
               </p>
             ) : canReview ? (
               <div>
-                <h6 className="fw-bold mb-3" style={{ color: "#5a4a3f" }}>Viết đánh giá của bạn</h6>
+                <h6 className="font-bold mb-3" style={{ color: "#5a4a3f" }}>Viết đánh giá của bạn</h6>
                 <div className="mb-3">
-                  <label className="text-muted small mb-1 d-block">Đánh giá sao</label>
+                  <label className="text-gray-500 small mb-1 block">Đánh giá sao</label>
                   <Rate value={reviewRating} onChange={setReviewRating} style={{ color: "#f59e0b" }} />
                 </div>
                 <div className="mb-3">
@@ -390,8 +390,8 @@ function ProductDetailPage() {
                 </button>
               </div>
             ) : (
-              <p className="text-muted text-center small">
-                <iconify-icon icon="ph:lock-simple" class="me-1"></iconify-icon>
+              <p className="text-gray-500 text-center small">
+                <iconify-icon icon="ph:lock-simple" class="mr-1"></iconify-icon>
                 Bạn chỉ có thể đánh giá sau khi mua hàng. 
               </p>
             )}

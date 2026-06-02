@@ -104,8 +104,8 @@ function PromotionManagement() {
             dataIndex: 'name',
             render: (name, r) => (
                 <div>
-                    <div className="fw-semibold">{name}</div>
-                    {r.description && <div className="text-muted small">{r.description}</div>}
+                    <div className="font-semibold">{name}</div>
+                    {r.description && <div className="text-gray-500 small">{r.description}</div>}
                 </div>
             ),
         },
@@ -121,13 +121,13 @@ function PromotionManagement() {
         {
             title: 'Sản phẩm áp dụng',
             dataIndex: 'products',
-            render: (prods) => <span className="text-muted small">{prods?.length || 0} sản phẩm</span>,
+            render: (prods) => <span className="text-gray-500 small">{prods?.length || 0} sản phẩm</span>,
             width: 140,
         },
         {
             title: 'Thời gian',
             render: (_, r) => (
-                <span className="small text-muted">
+                <span className="small text-gray-500">
                     {r.startDate ? new Date(r.startDate).toLocaleDateString('vi-VN') : '—'} →{' '}
                     {r.endDate ? new Date(r.endDate).toLocaleDateString('vi-VN') : '—'}
                 </span>
@@ -162,7 +162,7 @@ function PromotionManagement() {
 
     return (
         <div>
-            <div className="d-flex justify-content-between align-items-center mb-4">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
                 <h4 style={{ color: '#3a2e28', fontWeight: 600 }}>Quản lý khuyến mãi</h4>
                 <Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>Tạo khuyến mãi</Button>
             </div>
@@ -269,7 +269,7 @@ function PromotionManagement() {
                         <Switch checkedChildren="Đang chạy" unCheckedChildren="Tắt" />
                     </Form.Item>
 
-                    <div className="d-flex gap-2 justify-content-end">
+                    <div className="flex gap-2 justify-end">
                         <Button onClick={() => setModalOpen(false)}>Hủy</Button>
                         <Button type="primary" htmlType="submit" loading={saving}>Lưu khuyến mãi</Button>
                     </div>

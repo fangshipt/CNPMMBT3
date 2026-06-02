@@ -58,37 +58,37 @@ function ServicesPage() {
 
         <div className="text-center mb-5">
           <iconify-icon icon="ph:sparkle" style={{ fontSize: '2.5rem', color: '#DEAD6F' }}></iconify-icon>
-          <h1 className="fw-normal mt-3 mb-2" style={{ color: '#3a2e28' }}>Dịch vụ của chúng tôi</h1>
-          <p className="text-muted">Chúng tôi cung cấp đa dạng dịch vụ để chăm sóc toàn diện cho thú cưng của bạn</p>
+          <h1 className="font-normal mt-3 mb-2" style={{ color: '#3a2e28' }}>Dịch vụ của chúng tôi</h1>
+          <p className="text-gray-500">Chúng tôi cung cấp đa dạng dịch vụ để chăm sóc toàn diện cho thú cưng của bạn</p>
         </div>
 
         <div className="row g-4">
           {SERVICES.map((service, i) => (
             <div key={i} className="col-md-6 col-lg-4">
-              <div className="bg-white rounded-4 p-4 h-100 position-relative" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)', transition: 'transform 0.2s, box-shadow 0.2s' }}
+              <div className="bg-white rounded-4 p-4 h-full relative" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)', transition: 'transform 0.2s, box-shadow 0.2s' }}
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.1)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.06)'; }}
               >
                 {service.badge && (
-                  <span className="badge position-absolute" style={{ top: 16, right: 16, background: service.badgeColor, fontSize: '0.72rem' }}>
+                  <span className="badge absolute" style={{ top: 16, right: 16, background: service.badgeColor, fontSize: '0.72rem' }}>
                     {service.badge}
                   </span>
                 )}
                 <div style={{ width: 56, height: 56, background: '#FFF8F0', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
                   <iconify-icon icon={service.icon} style={{ fontSize: '1.6rem', color: '#DEAD6F' }}></iconify-icon>
                 </div>
-                <h5 className="fw-semibold mb-2" style={{ color: '#3a2e28' }}>{service.title}</h5>
-                <p className="text-muted mb-0" style={{ lineHeight: 1.7, fontSize: '0.9rem' }}>{service.description}</p>
+                <h5 className="font-semibold mb-2" style={{ color: '#3a2e28' }}>{service.title}</h5>
+                <p className="text-gray-500 mb-0" style={{ lineHeight: 1.7, fontSize: '0.9rem' }}>{service.description}</p>
               </div>
             </div>
           ))}
         </div>
 
         <div className="mt-5 bg-white rounded-4 p-4 p-md-5 text-center" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-          <h4 className="fw-normal mb-2" style={{ color: '#3a2e28' }}>Cần thêm thông tin?</h4>
-          <p className="text-muted mb-4">Liên hệ với chúng tôi để được tư vấn và báo giá chi tiết cho từng dịch vụ.</p>
+          <h4 className="font-normal mb-2" style={{ color: '#3a2e28' }}>Cần thêm thông tin?</h4>
+          <p className="text-gray-500 mb-4">Liên hệ với chúng tôi để được tư vấn và báo giá chi tiết cho từng dịch vụ.</p>
           <Link to="/contact" className="btn btn-primary rounded-2 px-4">
-            <iconify-icon icon="ph:phone" class="me-2"></iconify-icon>
+            <iconify-icon icon="ph:phone" class="mr-2"></iconify-icon>
             Liên hệ ngay
           </Link>
         </div>

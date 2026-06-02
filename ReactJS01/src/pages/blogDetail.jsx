@@ -26,7 +26,7 @@ function BlogDetailPage() {
     return (
       <div style={{ background: '#F9F3EC', minHeight: '100vh' }} className="py-5">
         <div className="container text-center">
-          <p className="text-muted">Không tìm thấy bài viết.</p>
+          <p className="text-gray-500">Không tìm thấy bài viết.</p>
           <Link to="/blog" className="btn btn-primary">Quay lại danh sách</Link>
         </div>
       </div>
@@ -47,17 +47,17 @@ function BlogDetailPage() {
         </nav>
 
         <article className="bg-white rounded-4 shadow-sm p-4 p-md-5">
-          <h1 className="fw-normal mb-3" style={{ color: '#3a2e28', lineHeight: 1.4 }}>{post.title}</h1>
+          <h1 className="font-normal mb-3" style={{ color: '#3a2e28', lineHeight: 1.4 }}>{post.title}</h1>
 
-          <div className="d-flex align-items-center gap-3 mb-4 text-muted small">
+          <div className="flex items-center gap-3 mb-4 text-gray-500 small">
             {post.author?.fullName && (
               <span>
-                <iconify-icon icon="ph:user-circle" class="me-1"></iconify-icon>
+                <iconify-icon icon="ph:user-circle" class="mr-1"></iconify-icon>
                 {post.author.fullName}
               </span>
             )}
             <span>
-              <iconify-icon icon="ph:calendar" class="me-1"></iconify-icon>
+              <iconify-icon icon="ph:calendar" class="mr-1"></iconify-icon>
               {date.toLocaleDateString('vi-VN')}
             </span>
           </div>
@@ -72,7 +72,7 @@ function BlogDetailPage() {
           )}
 
           {post.excerpt && (
-            <p className="lead mb-4 text-muted" style={{ borderLeft: '4px solid #DEAD6F', paddingLeft: '1rem' }}>
+            <p className="lead mb-4 text-gray-500" style={{ borderLeft: '4px solid #DEAD6F', paddingLeft: '1rem' }}>
               {post.excerpt}
             </p>
           )}
@@ -88,7 +88,7 @@ function BlogDetailPage() {
 
         <div className="mt-4">
           <Link to="/blog" className="btn btn-outline-secondary rounded-2">
-            <iconify-icon icon="ph:arrow-left" class="me-1"></iconify-icon>
+            <iconify-icon icon="ph:arrow-left" class="mr-1"></iconify-icon>
             Quay lại danh sách
           </Link>
         </div>

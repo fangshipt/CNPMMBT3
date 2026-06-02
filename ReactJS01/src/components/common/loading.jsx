@@ -1,12 +1,13 @@
-function Loading({ text = "Đang tải..." }) {
+function Loading({ text = "Äang táº£i..." }) {
   return (
-    <div className="d-flex justify-content-center align-items-center py-5">
-      <div className="spinner-border text-primary me-3" role="status">
+    <div className="flex justify-center items-center py-10">
+      <div className="spinner-border text-primary mr-4" role="status">
         <span className="visually-hidden">Loading...</span>
       </div>
-      <span className="text-muted">{text}</span>
+      <span className="text-gray-500">{text}</span>
     </div>
   );
 }
 
 export default Loading;
+

@@ -18,7 +18,15 @@ const createUserApi = (name, email, password) => {
 }
 
 const loginApi = (email, password) => {
-    return axios.post("/v1/api/login", { email, password });
+    return axios.post("/api/auth/login", { email, password });
+}
+
+const registerAuthApi = (fullName, email, password, confirmPassword) => {
+    return axios.post("/api/auth/register", { fullName, email, password, confirmPassword });
+}
+
+const activateAccountApi = (email, otp) => {
+    return axios.post("/api/auth/activate", { email, otp });
 }
 
 const getUserApi = () => {
@@ -131,8 +139,13 @@ const getAllChatsApi = () => axios.get('/v1/api/chat/admin/all');
 const getAdminChatApi = (userId) => axios.get(`/v1/api/chat/admin/${userId}`);
 const adminReplyApi = (userId, text) => axios.post(`/v1/api/chat/admin/${userId}`, { text });
 
+// Auth - Quên mật khẩu
+const forgotPasswordApi = (email) => axios.post('/api/auth/forgot-password', { email });
+const resetPasswordApi = (email, otp, newPassword, confirmPassword) =>
+    axios.post('/api/auth/reset-password', { email, otp, newPassword, confirmPassword });
+
 export {
-    createUserApi, loginApi, getUserApi,
+    createUserApi, loginApi, registerAuthApi, activateAccountApi, getUserApi,
     updateProfileApi, changePasswordApi, updateAvatarApi,
     getProductsApi, getProductByIdOrSlugApi, getRelatedProductsApi, getCategoriesApi,
     createProductApi, updateProductApi, deleteProductApi,
@@ -150,4 +163,5 @@ export {
     getAdminTestimonialsApi, updateTestimonialApprovalApi, deleteTestimonialApi,
     getRevenueApi,
     getUserChatApi, sendUserMessageApi, getAllChatsApi, getAdminChatApi, adminReplyApi,
+    forgotPasswordApi, resetPasswordApi,
 }

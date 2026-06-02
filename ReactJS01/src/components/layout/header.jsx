@@ -76,13 +76,15 @@ const Header = () => {
     },
     {
       label: auth.isAuthenticated ? (
-        <span style={{ display: "flex", alignItems: "center", gap: 7 }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 8, lineHeight: 1 }}>
           <Avatar
             size={26}
             icon={<UserOutlined />}
             style={{ backgroundColor: "#ff6b35", flexShrink: 0 }}
           />
-          <span>Chào {auth?.user?.name || auth?.user?.email || "bạn"}!</span>
+          <span style={{ fontSize: "0.88rem", fontWeight: 500, color: "#3a2e28" }}>
+            Chào {auth?.user?.name || auth?.user?.email || "bạn"}!
+          </span>
         </span>
       ) : (
         "Tài khoản"

@@ -22,11 +22,11 @@ function RelatedProducts({ productId }) {
 
   return (
     <section className="mt-5 pt-4 border-top">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h3 className="fw-normal m-0">Sản phẩm tương tự</h3>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="font-normal m-0">Sản phẩm tương tự</h3>
         <Link to="/products" className="btn btn-outline-dark btn-sm rounded-1">
           Xem thêm
-          <svg width="18" height="18" viewBox="0 0 24 24" className="mb-1 ms-1">
+          <svg width="18" height="18" viewBox="0 0 24 24" className="mb-1 ml-1">
             <use xlinkHref="#arrow-right"></use>
           </svg>
         </Link>

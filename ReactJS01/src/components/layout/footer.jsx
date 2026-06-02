@@ -16,7 +16,7 @@ function Footer() {
                 </p>
 
                 <div className="social-links">
-                  <ul className="d-flex list-unstyled gap-2">
+                  <ul className="flex list-unstyled gap-2">
 
                     <li className="social">
                       <a href="#">
@@ -134,7 +134,7 @@ function Footer() {
 
                 <div className="search-bar border rounded-pill border-dark-subtle px-2">
                   <form
-                    className="text-center d-flex align-items-center"
+                    className="text-center flex items-center"
                     action=""
                     method=""
                   >

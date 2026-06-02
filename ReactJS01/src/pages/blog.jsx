@@ -26,14 +26,14 @@ function BlogPage() {
     <div style={{ background: '#F9F3EC', minHeight: '100vh' }}>
       <div className="container py-5">
         <div className="mb-4">
-          <h1 className="fw-normal" style={{ color: '#3a2e28' }}>Bài viết</h1>
-          <p className="text-muted">Kiến thức và mẹo chăm sóc thú cưng</p>
+          <h1 className="font-normal" style={{ color: '#3a2e28' }}>Bài viết</h1>
+          <p className="text-gray-500">Kiến thức và mẹo chăm sóc thú cưng</p>
         </div>
 
         {loading ? (
           <Loading />
         ) : posts.length === 0 ? (
-          <div className="text-center py-5 text-muted">
+          <div className="text-center py-5 text-gray-500">
             <iconify-icon icon="ph:newspaper" style={{ fontSize: '3rem' }}></iconify-icon>
             <p className="mt-3">Chưa có bài viết nào.</p>
           </div>
@@ -46,8 +46,8 @@ function BlogPage() {
                 const month = MONTHS_VI[date.getMonth()];
                 return (
                   <div key={post._id} className="col-md-6 col-lg-4">
-                    <article className="card blog-card position-relative h-100">
-                      <div className="blog-date position-absolute">
+                    <article className="card blog-card relative h-full">
+                      <div className="blog-date absolute">
                         <h3 className="secondary-font text-primary m-0">{day}</h3>
                         <p className="secondary-font fs-6 m-0">{month}</p>
                       </div>
@@ -81,7 +81,7 @@ function BlogPage() {
             </div>
 
             {totalPages > 1 && (
-              <div className="d-flex justify-content-center gap-2 mt-5">
+              <div className="flex justify-center gap-2 mt-5">
                 {Array.from({ length: totalPages }, (_, i) => (
                   <button
                     key={i}
